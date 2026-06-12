@@ -1,0 +1,6 @@
+{
+  "name": "Luminae Beauty & Parlour",
+  "description": "Premium beauty parlour management system with localized Sri Lankan packages, multi-role client portals, calendars, and booking tools.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

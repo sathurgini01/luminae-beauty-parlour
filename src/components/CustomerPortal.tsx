@@ -1,0 +1,1612 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import React, { useState } from "react";
+import { useAppState } from "../context/AppContext";
+import { 
+  Sparkles, Gift, Clock, Calendar, CheckCircle, Search, Scissors, 
+  MapPin, Phone, HelpCircle, Star, Palette, Award, Trash2, ChevronRight, 
+  ArrowRight, ShieldCheck, Heart, User, Sparkle, AlertCircle, ShoppingBag, 
+  History, Eye
+} from "lucide-react";
+import { Service, Package, Appointment } from "../types";
+import { COMPARISON_ERAS } from "../lib/mockData";
+
+// @ts-ignore
+import beautyHeroModel from "../assets/images/beauty_model_hair_1781258127179.jpg";
+// @ts-ignore
+import haircutImg from "../assets/images/style_haircut_1781258153827.jpg";
+// @ts-ignore
+import hairstyleImg from "../assets/images/style_hairstyle_1781258171871.jpg";
+// @ts-ignore
+import coloringImg from "../assets/images/style_coloring_1781258188775.jpg";
+// @ts-ignore
+import teamOlivia from "../assets/images/team_olivia_1781258208138.jpg";
+// @ts-ignore
+import teamAmelia from "../assets/images/team_amelia_1781258227019.jpg";
+// @ts-ignore
+import teamEmily from "../assets/images/team_emily_1781258242234.jpg";
+
+interface CustomerPortalProps {
+  activeSection: string;
+  onNavigate: (section: string) => void;
+}
+
+export default function CustomerPortal({ activeSection, onNavigate }: CustomerPortalProps) {
+  const { 
+    currentUser, 
+    appointments, 
+    services, 
+    packages, 
+    addAppointment, 
+    updateAppointmentStatus,
+    addFeedback,
+    workers 
+  } = useAppState();
+
+  // Search & Filter state for Services page
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  // Booking Wizard State
+  const [bookingStep, setBookingStep] = useState(1);
+  const [selectedServiceType, setSelectedServiceType] = useState<"service" | "package">("service");
+  const [chosenServiceId, setChosenServiceId] = useState("");
+  const [chosenPackageId, setChosenPackageId] = useState("");
+  const [bookingDate, setBookingDate] = useState("");
+  const [bookingTime, setBookingTime] = useState("");
+  const [bookingStaff, setBookingStaff] = useState("unassigned");
+  const [bookingNotes, setBookingNotes] = useState("");
+  const [showQRModal, setShowQRModal] = useState(false);
+
+  // Review states inside loyalty portal
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewAptId, setReviewAptId] = useState<string | null>(null);
+
+  const categories = ["All", "Hair", "Skin & Facial", "Nails", "Body & Waxing", "Bridal & Special Occasion", "Relaxation & Wellness"];
+
+  // 1. SERVICES PAGE FILTER LOGIC
+  const filteredServices = services.filter(srv => {
+    const matchesSearch = srv.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          srv.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "All" || srv.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  // Client specific lists
+  const clientAppointments = appointments.filter(apt => apt.clientId === currentUser?.id);
+  const upcomingBookings = clientAppointments.filter(apt => apt.status !== "completed" && apt.status !== "cancelled");
+  const pastBookings = clientAppointments.filter(apt => apt.status === "completed");
+
+  // Calculate stats for customer
+  const totalVisits = pastBookings.length;
+  // Dynamic loyalty score calculation: 10 points for every 1000 LKR spent
+  const totalSpent = pastBookings.reduce((sum, apt) => sum + apt.price, 0);
+  const loyaltyPoints = Math.floor(totalSpent / 150); // Generous points program
+
+  const getTier = () => {
+    if (loyaltyPoints >= 500) return "Gold";
+    if (loyaltyPoints >= 200) return "Silver";
+    return "Bronze";
+  };
+
+  const getTierColor = (tier: string) => {
+    if (tier === "Gold") return "from-amber-400 to-yellow-600 text-white";
+    if (tier === "Silver") return "from-gray-300 to-slate-500 text-slate-800";
+    return "from-amber-600 to-amber-800 text-amber-50";
+  };
+
+  // 2. BOOKING ACTION TRIGGERS
+  const triggerQuickBook = (id: string, type: "service" | "package") => {
+    setSelectedServiceType(type);
+    if (type === "service") {
+      setChosenServiceId(id);
+      setChosenPackageId("");
+    } else {
+      setChosenPackageId(id);
+      setChosenServiceId("");
+    }
+    setBookingStep(1);
+    onNavigate("book");
+  };
+
+  // Create booking
+  const handleCompleteBooking = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentUser) {
+      alert("Please log in to complete your beauty parlour booking.");
+      onNavigate("login");
+      return;
+    }
+
+    let bName = "";
+    let bPrice = 0;
+    let bCategory = "";
+    let bDuration = 45;
+
+    if (selectedServiceType === "service") {
+      const selectedSrv = services.find(s => s.id === chosenServiceId);
+      if (!selectedSrv) return;
+      bName = selectedSrv.name;
+      bPrice = selectedSrv.price;
+      bCategory = selectedSrv.category;
+      bDuration = selectedSrv.duration;
+    } else {
+      const selectedPkg = packages.find(p => p.id === chosenPackageId);
+      if (!selectedPkg) return;
+      bName = selectedPkg.name;
+      bPrice = selectedPkg.discountPrice;
+      bCategory = "Bridal & Combo Packages";
+      bDuration = 120; // Avg package
+    }
+
+    addAppointment({
+      clientId: currentUser.id,
+      clientName: currentUser.name,
+      clientPhone: currentUser.phone,
+      workerId: bookingStaff,
+      serviceId: selectedServiceType === "service" ? chosenServiceId : chosenPackageId,
+      serviceName: bName,
+      category: bCategory,
+      date: bookingDate || new Date().toISOString().split("T")[0],
+      time: bookingTime || "10:00",
+      price: bPrice,
+      duration: bDuration,
+      notes: bookingNotes
+    });
+
+    // Reset steps
+    setBookingStep(3); // Go to final confirmation screen with LankaQR code display
+  };
+
+  const submitClientReview = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reviewAptId) return;
+    addFeedback(reviewAptId, reviewComment, reviewRating);
+    setReviewAptId(null);
+    setReviewComment("");
+    setReviewRating(5);
+  };
+
+  return (
+    <div className="bg-[#FAF8F6] min-h-screen font-sans text-[#2C2C2A]" id="customer-core-portal">
+      
+      {/* ----------------- SECTION A: PUBLIC LANDING PAGE ----------------- */}
+      {activeSection === "landing" && (
+        <div className="space-y-16 pb-20">
+          
+          {/* Hero Banner */}
+          <section className="relative overflow-hidden py-12 md:py-16" id="section-hero">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="bg-[#7B3224] rounded-[2.5rem] overflow-hidden relative shadow-2xl p-8 sm:p-12 lg:p-16 text-[#FAF8F6] grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center min-h-[580px]">
+                {/* Decorative background circle or subtle gradients */}
+                <div className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-white/5 blur-3xl pointer-events-none" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[300px] h-[300px] rounded-full bg-black/10 blur-2xl pointer-events-none" />
+                
+                <div className="lg:col-span-7 space-y-6 relative z-10">
+                  {/* Tiny tag */}
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold text-[#f5eae6]">
+                    <Sparkles className="h-3.5 w-3.5 animate-spin text-teal-300" />
+                    <span className="font-serif tracking-wide text-[10px]">LUMINAE • Ceylon Beauty Standards</span>
+                  </div>
+                  
+                  {/* Large Display Title */}
+                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-light tracking-tight text-white leading-[1.08] selection:bg-transparent">
+                    Get Hair Style <br />
+                    You Deserve
+                  </h1>
+                  
+                  {/* Red round appointment button */}
+                  <div className="pt-2">
+                    <button 
+                      onClick={() => onNavigate("book")}
+                      className="px-8 py-3 bg-[#9E3D2F] hover:bg-[#b54a39] text-white font-bold text-xs rounded-full transition-all hover:scale-105 shadow-lg flex items-center gap-2 uppercase tracking-widest cursor-pointer border border-[#faf8f6]/10"
+                    >
+                      <span>Book Appointment</span>
+                      <ArrowRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                  
+                  {/* Creative Description matching Image 1 */}
+                  <p className="text-xs sm:text-xs text-white/70 leading-relaxed max-w-md pt-4 font-normal font-sans">
+                    Discover a world of sophistication and personalized beauty at LUMINAE. Our salon is more than just a place for haircuts; it's a haven where your unique style takes center stage.
+                  </p>
+
+                  {/* Bottom Badges matching Image 1 */}
+                  <div className="pt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Badge 1: New Arrivals */}
+                    <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex items-center justify-between gap-3 group hover:bg-white/15 transition-all">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-lg bg-white/10 flex items-center justify-center">
+                          <Scissors className="h-5 w-5 text-white" />
+                        </div>
+                        <div>
+                          <h4 className="text-xs font-serif font-semibold text-white">New Arrivals</h4>
+                          <p className="text-[10px] text-white/50 tracking-wider uppercase font-semibold">+5 Products</p>
+                        </div>
+                      </div>
+                      <button 
+                        onClick={() => onNavigate("services")}
+                        className="h-8 w-8 rounded-full bg-[#FAF8F6] hover:bg-white text-[#7B3224] flex items-center justify-center transition-colors shadow-md shadow-black/10 cursor-pointer"
+                      >
+                        <ArrowRight className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    {/* Badge 2: Only Today 50% OFF */}
+                    <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex items-center justify-between gap-3 group hover:bg-white/15 transition-all">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 text-teal-300 rounded-lg bg-teal-500/10 flex items-center justify-center">
+                          <Sparkle className="h-5 w-5 text-teal-300 animate-pulse" />
+                        </div>
+                        <div>
+                          <h4 className="text-xs font-serif font-semibold text-white">Only Today</h4>
+                          <p className="text-[10px] text-teal-300 tracking-wider uppercase font-semibold">50% Off Hair Styling</p>
+                        </div>
+                      </div>
+                      <button 
+                        onClick={() => onNavigate("services")}
+                        className="h-8 w-8 rounded-full bg-[#FAF8F6] hover:bg-white text-[#7B3224] flex items-center justify-center transition-colors shadow-md shadow-black/10 cursor-pointer"
+                      >
+                        <ArrowRight className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Large floating model illustration on right */}
+                <div className="lg:col-span-5 relative h-full flex items-center justify-center lg:justify-end">
+                  <div className="relative w-full max-w-sm lg:max-w-none aspect-[4/5] sm:aspect-square lg:aspect-[4/5] rounded-[2rem] overflow-hidden border border-white/15 shadow-2xl group">
+                    <img 
+                      src={beautyHeroModel} 
+                      alt="Luminae Hair Model" 
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[4s]" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+                    
+                    {/* Team Avatars Overlay matching bottom right of Image 1 */}
+                    <div className="absolute bottom-4 left-4 right-4 bg-black/45 backdrop-blur-md px-4 py-3 border border-white/10 rounded-2xl flex items-center justify-between">
+                      <div className="flex flex-col">
+                        <span className="text-[9px] text-[#FAF8F6]/60 font-semibold tracking-[0.15em] uppercase font-sans">Meet Our Best</span>
+                        <span className="text-xs font-serif font-bold text-[#FAF8F6]">Join our expert team</span>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="flex -space-x-2 overflow-hidden">
+                          <img className="inline-block h-7 w-7 rounded-full ring-2 ring-neutral-800 object-cover" src={teamOlivia} alt="Olivia" referrerPolicy="no-referrer" />
+                          <img className="inline-block h-7 w-7 rounded-full ring-2 ring-neutral-800 object-cover" src={teamAmelia} alt="Amelia" referrerPolicy="no-referrer" />
+                          <img className="inline-block h-7 w-7 rounded-full ring-2 ring-neutral-800 object-cover" src={teamEmily} alt="Emily" referrerPolicy="no-referrer" />
+                        </div>
+                        <button 
+                          onClick={() => onNavigate("story")}
+                          className="ml-2.5 h-6 w-6 rounded-full bg-white hover:bg-[#D4537E] hover:text-white text-neutral-800 flex items-center justify-center transition-colors cursor-pointer"
+                          title="View all team members"
+                        >
+                          <span className="text-xs font-extrabold leading-none">+</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Our Services Category Cards bottom of Image 1 */}
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              {/* Left description block: col-span-4 */}
+              <div className="lg:col-span-4 space-y-4">
+                <span className="text-[10px] text-[#7B3224] tracking-[0.2em] font-sans font-extrabold uppercase block">Professional Ranges</span>
+                <h2 className="text-3xl md:text-4xl font-serif text-[#2C2C2A] font-light leading-tight">
+                  Our Services
+                </h2>
+                <p className="text-xs text-gray-500 leading-relaxed font-sans max-w-sm">
+                  Beyond haircuts, discover a comprehensive range of premium services, from creative coloring & balayage, intensive Ayurvedic skin treatments, to high-fashion hairstyles.
+                </p>
+                <div className="pt-2">
+                  <button 
+                    onClick={() => {
+                      setSelectedCategory("All");
+                      onNavigate("services");
+                    }}
+                    className="text-xs font-extrabold text-[#7B3224] hover:text-[#9E3D2F] flex items-center gap-1.5 group cursor-pointer"
+                  >
+                    <span>View full treatment menu</span>
+                    <ArrowRight className="h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Right Cards list: col-span-8 */}
+              <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
+                
+                {/* Haircuts Card */}
+                <div 
+                  onClick={() => {
+                    setSelectedCategory("Hair");
+                    setSearchTerm("");
+                    onNavigate("services");
+                  }}
+                  className="group relative rounded-[2rem] overflow-hidden aspect-[3/4] cursor-pointer shadow-md shadow-black/5 hover:-translate-y-2 transition-all duration-500 border border-neutral-100"
+                >
+                  <img src={haircutImg} alt="Haircuts" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" referrerPolicy="no-referrer" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                  <div className="absolute top-4 left-4">
+                    <span className="px-4 py-1.5 bg-white/90 backdrop-blur-sm text-[#2C2C2A] text-[10px] uppercase font-bold tracking-widest rounded-full shadow">
+                      Haircuts
+                    </span>
+                  </div>
+                  <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-white">
+                    <div>
+                      <h4 className="text-sm font-serif font-bold text-white">Sharp & Precision</h4>
+                      <p className="text-[9px] text-[#FAF8F6]/75 uppercase tracking-wider font-semibold font-sans">Bob, layers & trims</p>
+                    </div>
+                    <span className="h-8 w-8 rounded-full bg-white text-[#7B3224] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      →
+                    </span>
+                  </div>
+                </div>
+
+                {/* Hairstyles Card */}
+                <div 
+                  onClick={() => {
+                    setSelectedCategory("Hair");
+                    setSearchTerm("");
+                    onNavigate("services");
+                  }}
+                  className="group relative rounded-[2rem] overflow-hidden aspect-[3/4] cursor-pointer shadow-md shadow-black/5 hover:-translate-y-2 transition-all duration-500 border border-neutral-100"
+                >
+                  <img src={hairstyleImg} alt="Hairstyles" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" referrerPolicy="no-referrer" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                  <div className="absolute top-4 left-4">
+                    <span className="px-4 py-1.5 bg-white/90 backdrop-blur-sm text-[#2C2C2A] text-[10px] uppercase font-bold tracking-widest rounded-full shadow">
+                      Hairstyles
+                    </span>
+                  </div>
+                  <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-white">
+                    <div>
+                      <h4 className="text-sm font-serif font-bold text-white">Curated Styling</h4>
+                      <p className="text-[9px] text-[#FAF8F6]/75 uppercase tracking-wider font-semibold font-sans">Waves, curls & blowout</p>
+                    </div>
+                    <span className="h-8 w-8 rounded-full bg-white text-[#7B3224] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      →
+                    </span>
+                  </div>
+                </div>
+
+                {/* Coloring Card */}
+                <div 
+                  onClick={() => {
+                    setSelectedCategory("Hair");
+                    setSearchTerm("Colouring");
+                    onNavigate("services");
+                  }}
+                  className="group relative rounded-[2rem] overflow-hidden aspect-[3/4] cursor-pointer shadow-md shadow-black/5 hover:-translate-y-2 transition-all duration-500 border border-neutral-100"
+                >
+                  <img src={coloringImg} alt="Coloring" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" referrerPolicy="no-referrer" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                  <div className="absolute top-4 left-4">
+                    <span className="px-4 py-1.5 bg-white/90 backdrop-blur-sm text-[#2C2C2A] text-[10px] uppercase font-bold tracking-widest rounded-full shadow">
+                      Coloring
+                    </span>
+                  </div>
+                  <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-white">
+                    <div>
+                      <h4 className="text-sm font-serif font-bold text-white">Artistic Balayage</h4>
+                      <p className="text-[9px] text-[#FAF8F6]/75 uppercase tracking-wider font-semibold font-sans">Full dye, pastel & roots</p>
+                    </div>
+                    <span className="h-8 w-8 rounded-full bg-white text-[#7B3224] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      →
+                    </span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+          {/* Why Choose Us section (Image 2 terracotta stat grid) */}
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="bg-[#7B3224] rounded-[2.5rem] p-8 sm:p-12 text-[#FAF8F6] grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start relative shadow-xl overflow-hidden">
+              <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-white/5 blur-3xl pointer-events-none" />
+              
+              {/* Left stats column: col-span-4 */}
+              <div className="lg:col-span-4 space-y-6">
+                <span className="text-[10px] text-white/50 tracking-[0.25em] font-sans font-bold uppercase block">LUMINAE CEYLON</span>
+                <h2 className="text-3xl sm:text-4xl font-serif font-light text-white leading-tight">Why Choose Us</h2>
+                <p className="text-xs text-white/60 leading-relaxed font-sans pr-4 pt-1">
+                  Discover Ceylon's finest hair mechanics and organic skincare therapies custom tailored for your specific grace. Combining NVQ gold standards with MOH hygienic luxury.
+                </p>
+                
+                <div className="pt-6 border-t border-white/10 flex items-center gap-10">
+                  <div>
+                    <span className="block text-3xl font-serif font-light text-white">4.97</span>
+                    <span className="text-[9px] uppercase font-bold tracking-widest text-[#FAF8F6]/40 block mt-1">Google Rating</span>
+                  </div>
+                  <div className="w-px h-10 bg-white/10" />
+                  <div>
+                    <span className="block text-3xl font-serif font-light text-white">1,400+</span>
+                    <span className="text-[9px] uppercase font-bold tracking-widest text-[#FAF8F6]/40 block mt-1">Happy Brides</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right grid column: col-span-8 */}
+              <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
+                {/* Card 1 */}
+                <div className="bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl p-6 transition-colors space-y-3">
+                  <div className="h-8 w-8 text-rose-300">
+                    <Award className="h-6 w-6 stroke-[1.25]" />
+                  </div>
+                  <h3 className="text-sm font-serif font-medium text-white">Supreme Artistry</h3>
+                  <p className="text-xs text-white/55 leading-relaxed font-sans">
+                    Our team of highly skilled and experienced stylists is dedicated to staying on the cutting edge of industry trends. Trust us to transform your vision into a stunning reality.
+                  </p>
+                </div>
+
+                {/* Card 2 */}
+                <div className="bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl p-6 transition-colors space-y-3">
+                  <div className="h-8 w-8 text-rose-300">
+                    <User className="h-6 w-6 stroke-[1.25]" />
+                  </div>
+                  <h3 className="text-sm font-serif font-medium text-white">Bespoke Consultations</h3>
+                  <p className="text-xs text-white/55 leading-relaxed font-sans">
+                    Your unique style is our priority. Enjoy personalized consultations with our stylists, ensuring a treatment plan that complements your features, lifestyle, and fashion.
+                  </p>
+                </div>
+
+                {/* Card 3 */}
+                <div className="bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl p-6 transition-colors space-y-3">
+                  <div className="h-8 w-8 text-rose-300">
+                    <Sparkles className="h-6 w-6 stroke-[1.25]" />
+                  </div>
+                  <h3 className="text-sm font-serif font-medium text-white">Setting Trends</h3>
+                  <p className="text-xs text-white/55 leading-relaxed font-sans">
+                    We're not just following trends; we're setting them. Step into the latest fashion with our trendsetting styles that keep you ahead of the local curve.
+                  </p>
+                </div>
+
+                {/* Card 4 */}
+                <div className="bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl p-6 transition-colors space-y-3">
+                  <div className="h-8 w-8 text-rose-300">
+                    <ShieldCheck className="h-6 w-6 stroke-[1.25]" />
+                  </div>
+                  <h3 className="text-sm font-serif font-medium text-white">Pure & Organic Care</h3>
+                  <p className="text-xs text-white/55 leading-relaxed font-sans">
+                    We believe in using only the best. Our premium hair care and styling products ensure not only a flawless finish but also the long-term health of your tropical hair.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Our Team Section matching Image 2 */}
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              {/* Left Side: Title and subtext */}
+              <div className="lg:col-span-4 space-y-6">
+                <div className="space-y-3">
+                  <span className="text-[10px] text-[#7B3224] tracking-[0.2em] font-sans font-extrabold uppercase block">LUMINAE EXPERTS</span>
+                  <h2 className="text-3xl md:text-4xl font-serif text-[#2C2C2A] font-light leading-tight">Our Team</h2>
+                  <p className="text-xs text-gray-500 leading-relaxed font-sans max-w-sm">
+                    Entrust your beauty locks to our team of exceptionally skilled and creative stylists, certified with top NVQ honors.
+                  </p>
+                </div>
+
+                {/* Team triggers & buttons */}
+                <div className="space-y-4 pt-2">
+                  <button 
+                    onClick={() => onNavigate("story")}
+                    className="px-6 py-2.5 bg-[#7B3224] hover:bg-[#63271b] text-white font-bold text-xs uppercase tracking-widest rounded-full transition-transform hover:scale-105 shadow-md inline-flex items-center gap-2 cursor-pointer"
+                  >
+                    <span>Read Our Story</span>
+                  </button>
+                  <div className="flex items-center gap-3 pt-2">
+                    <button className="h-9 w-9 rounded-full border border-neutral-200 flex items-center justify-center text-neutral-500 hover:bg-[#7B3224] hover:text-white hover:border-transparent transition-all cursor-pointer">
+                      <span className="text-lg">←</span>
+                    </button>
+                    <button className="h-9 w-9 rounded-full border border-neutral-200 flex items-center justify-center text-neutral-500 hover:bg-[#7B3224] hover:text-white hover:border-transparent transition-all cursor-pointer">
+                      <span className="text-lg">→</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Side: Stylist cards stack */}
+              <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
+                {/* Stylist 1 */}
+                <div className="bg-white p-3 rounded-[2.2rem] border border-neutral-100 hover:border-rose-100 transition-all duration-300 shadow-sm flex flex-col justify-between">
+                  <div>
+                    <div className="aspect-[4/5] rounded-[1.75rem] overflow-hidden relative group">
+                      <img src={teamOlivia} alt="Olivia Smith" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                    </div>
+                    <div className="pt-4 pb-2 px-2 text-center sm:text-left">
+                      <h4 className="text-sm font-serif font-bold text-neutral-800">Olivia Smith</h4>
+                      <p className="text-[10px] uppercase tracking-wider font-semibold text-neutral-500 mt-1">Senior Hairdresser</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stylist 2 */}
+                <div className="bg-white p-3 rounded-[2.2rem] border border-neutral-100 hover:border-rose-100 transition-all duration-300 shadow-sm sm:translate-y-4 flex flex-col justify-between">
+                  <div>
+                    <div className="aspect-[4/5] rounded-[1.75rem] overflow-hidden relative group">
+                      <img src={teamAmelia} alt="Amelia Brown" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                    </div>
+                    <div className="pt-4 pb-2 px-2 text-center sm:text-left">
+                      <h4 className="text-sm font-serif font-bold text-neutral-800">Amelia Brown</h4>
+                      <p className="text-[10px] uppercase tracking-wider font-semibold text-neutral-500 mt-1">Creative Styling Specialist</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stylist 3 */}
+                <div className="bg-white p-3 rounded-[2.2rem] border border-neutral-100 hover:border-rose-100 transition-all duration-300 shadow-sm flex flex-col justify-between">
+                  <div>
+                    <div className="aspect-[4/5] rounded-[1.75rem] overflow-hidden relative group">
+                      <img src={teamEmily} alt="Emily Walker" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                    </div>
+                    <div className="pt-4 pb-2 px-2 text-center sm:text-left">
+                      <h4 className="text-sm font-serif font-bold text-neutral-800">Emily Walker</h4>
+                      <p className="text-[10px] uppercase tracking-wider font-semibold text-neutral-500 mt-1">Senior Wedding Specialist</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Evolution Requirements Tab - The 4 Eras comparison */}
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="comparison-section">
+            <div className="text-center max-w-2xl mx-auto space-y-3">
+              <span className="text-xs font-extrabold tracking-widest text-[#7B3224] uppercase">Sri Lankan Beauty Innovation</span>
+              <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">The Evolution of Lankan Parlours</h2>
+              <p className="text-xs text-gray-500 leading-relaxed font-sans">
+                Explore the historic evolution of Ceylon parlours. From traditional walk-in backyard henna to today's checkout LankaQR systems and automated WhatsApp reminders.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-10">
+              {COMPARISON_ERAS.map((era) => {
+                const isCurrent = era.badge === "Current";
+                return (
+                  <div 
+                    key={era.id} 
+                    className={`p-6 rounded-3xl border transition-all duration-300 flex flex-col justify-between ${
+                      isCurrent 
+                        ? "bg-white border-rose-200 shadow-lg scale-102 ring-4 ring-[#7B3224]/5" 
+                        : "bg-white border-neutral-100 hover:border-rose-100 shadow-sm"
+                    }`}
+                  >
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <span className="text-[10px] uppercase font-bold text-gray-400 tracking-widest">{era.duration}</span>
+                          <h3 className="text-base font-extrabold text-[#2C2C2A] tracking-tight mt-0.5">{era.name}</h3>
+                        </div>
+                        <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                          era.badge === "Current" ? "bg-emerald-50 text-emerald-800 border border-emerald-200" :
+                          era.badge === "Modern" ? "bg-teal-50 text-teal-800" :
+                          era.badge === "Mid" ? "bg-amber-50 text-amber-800" : "bg-gray-100 text-gray-600"
+                        }`}>
+                          {era.badge}
+                        </span>
+                      </div>
+
+                      <div className="space-y-2.5 pt-2 border-t border-rose-50/50">
+                        <div>
+                          <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Services & Care:</span>
+                          <p className="text-xs text-gray-600 font-sans leading-relaxed mt-0.5">{era.features.join(", ")}</p>
+                        </div>
+                        <div>
+                          <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tools Used:</span>
+                          <p className="text-xs text-gray-600 font-sans mt-0.5">{era.tools.join(", ")}</p>
+                        </div>
+                        <div>
+                          <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Payments:</span>
+                          <p className="text-xs text-gray-600 font-sans mt-0.5">{era.payments.join(", ")}</p>
+                        </div>
+                        <div>
+                          <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Scheduling & CRM:</span>
+                          <p className={`text-xs font-sans mt-0.5 ${isCurrent ? "text-emerald-700 font-bold" : "text-gray-600"}`}>{era.scheduling.join(", ")}</p>
+                        </div>
+                        <div>
+                          <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Marketing:</span>
+                          <p className="text-xs text-gray-600 font-sans mt-0.5">{era.marketing.join(", ")}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {isCurrent && (
+                      <div className="pt-4 mt-4 border-t border-emerald-100 text-center">
+                        <span className="text-[10px] font-black text-[#1D9E75] block uppercase tracking-widest">Implemented & Active!</span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Quick core requirement stats display */}
+          <section className="bg-white border-y border-rose-100/50 py-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                <div className="space-y-2">
+                  <h3 className="text-xl font-bold tracking-tight text-[#2C2C2A] font-serif font-light">MOH Sanitary Compliance</h3>
+                  <p className="text-xs text-gray-500 font-sans leading-relaxed">
+                    Our stations strictly meet the physical guidelines of the Colombo Medical Officer of Health (MOH) and Local Municipal Authorities.
+                  </p>
+                </div>
+                <div className="md:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div className="bg-[#FAF8F6] p-4 rounded-xl text-center space-y-1">
+                    <span className="block text-2xl font-black text-[#7B3224]">3</span>
+                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Styling Stations</span>
+                  </div>
+                  <div className="bg-[#FAF8F6] p-4 rounded-xl text-center space-y-1">
+                    <span className="block text-2xl font-black text-[#7B3224]">2</span>
+                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Wash Basins</span>
+                  </div>
+                  <div className="bg-[#FAF8F6] p-4 rounded-xl text-center space-y-1">
+                    <span className="block text-2xl font-black text-[#7B3224]">1</span>
+                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Private Spa Suite</span>
+                  </div>
+                  <div className="bg-[#FAF8F6] p-4 rounded-xl text-center space-y-1">
+                    <span className="block text-2xl font-black text-emerald-700">100%</span>
+                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">MOH Permitted</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Featured Packages Promo Section */}
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col sm:flex-row justify-between items-end gap-4">
+              <div className="space-y-2">
+                <span className="text-xs font-extrabold tracking-widest text-[#7B3224] uppercase">Exclusive Spa Packages</span>
+                <h2 className="text-2xl font-black text-gray-900 tracking-tight">Our Most Popular Combinations</h2>
+              </div>
+              <button 
+                onClick={() => onNavigate("packages")}
+                className="text-xs font-extrabold text-[#7B3224] hover:text-[#9E3D2F] flex items-center gap-1 cursor-pointer"
+              >
+                <span>View all 8 packages</span>
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+              {packages.filter(p => p.isPopular).map((pkg) => (
+                <div key={pkg.id} className="bg-white p-6 rounded-2xl border border-rose-100 shadow-md flex flex-col justify-between hover:shadow-lg transition-transform hover:-translate-y-1 duration-300">
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-start">
+                      <span className="text-[10px] font-bold text-teal-800 bg-teal-50 px-2.5 py-1 rounded-full border border-teal-200">
+                        Popular Selection
+                      </span>
+                      <div className="text-right">
+                        <span className="block text-[10px] text-gray-400 line-through">LKR {pkg.totalPrice.toLocaleString()}</span>
+                        <span className="block text-base font-black text-[#7B3224]">LKR {pkg.discountPrice.toLocaleString()}</span>
+                      </div>
+                    </div>
+
+                    <h3 className="text-md font-bold text-gray-800">{pkg.name}</h3>
+                    <p className="text-xs text-gray-500 font-sans leading-relaxed">{pkg.description}</p>
+                    
+                    <ul className="text-xs space-y-1.5 pt-2 border-t border-rose-50/50">
+                      {pkg.inclusions.slice(0, 4).map((inc, index) => (
+                        <li key={index} className="flex items-center gap-2 text-gray-600 font-sans">
+                          <CheckCircle className="h-3.5 w-3.5 text-[#1D9E75] shrink-0" />
+                          <span>{inc}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <button 
+                    onClick={() => triggerQuickBook(pkg.id, "package")}
+                    className="w-full mt-6 py-2.5 bg-[#7B3224] hover:bg-[#63271b] text-white text-xs font-bold rounded-lg transition-colors cursor-pointer"
+                  >
+                    Book Package Now
+                  </button>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Testimonials */}
+          <section className="bg-[#FAF8F6] py-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center space-y-2 mb-10">
+                <span className="text-xs font-extrabold text-[#7B3224] uppercase tracking-widest">Verified Guest Bookings</span>
+                <h3 className="text-xl font-bold text-[#2C2C2A]">Testimonials from Loyal Clients</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-neutral-100 space-y-3">
+                  <div className="flex gap-1">
+                    {[1,2,3,4,5].map(v => <Star key={v} className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />)}
+                  </div>
+                  <p className="text-xs text-gray-600 leading-relaxed font-sans italic">
+                    "Priyanthi did my Kandyan bridal draping and she is a true magician! The 7-fold drape was completely secure and I danced all night without a single pin shifting. Worth every single Rupee!"
+                  </p>
+                  <div>
+                    <span className="block text-xs font-extrabold text-gray-800">Sathurgini R.</span>
+                    <span className="text-[10px] text-gray-400 font-sans">Regular Client • Colombo 07</span>
+                  </div>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-neutral-100 space-y-3">
+                  <div className="flex gap-1">
+                    {[1,2,3,4,5].map(v => <Star key={v} className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />)}
+                  </div>
+                  <p className="text-xs text-gray-600 leading-relaxed font-sans italic">
+                    "I book the luxury gel pedicure with Sanduni every single month. Hand-painted ocean art details are gorgeous. Love their digital LankaQR quick scan receipt experience."
+                  </p>
+                  <div>
+                    <span className="block text-xs font-extrabold text-gray-800">Nimisha F.</span>
+                    <span className="text-[10px] text-gray-400 font-sans">Regular Client • Galle Road</span>
+                  </div>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-neutral-100 space-y-3">
+                  <div className="flex gap-1">
+                    {[1,2,3,4,5].map(v => <Star key={v} className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />)}
+                  </div>
+                  <p className="text-xs text-gray-600 leading-relaxed font-sans italic">
+                    "Japanese Rebonding gave my unmanageable waves a mirror shine that persists even in local tropical humidity. Very professional staff with international standard certificates."
+                  </p>
+                  <div>
+                    <span className="block text-xs font-extrabold text-gray-800">Fathima Riza</span>
+                    <span className="text-[10px] text-gray-400 font-sans">Corporate Client • Colombo KCC</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      )}
+
+      {/* ----------------- SECTION B: DETAILED SERVICES MENU ----------------- */}
+      {activeSection === "services" && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8" id="section-services-menu">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-rose-100 pb-6">
+            <div className="space-y-1">
+              <span className="text-xs font-extrabold text-[#D4537E] uppercase tracking-widest">Complete Menu</span>
+              <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Our Professional Services</h1>
+              <p className="text-xs text-gray-500 font-sans">
+                Explore our full service selections tailored for ladies and gentlemen. Tap category tags to filter instantly.
+              </p>
+            </div>
+
+            {/* Live Search */}
+            <div className="relative w-full md:w-80">
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search beauty services..."
+                className="w-full bg-white border border-rose-200/60 rounded-xl py-2 pl-9 pr-4 text-xs font-sans focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-[#D4537E]"
+              />
+            </div>
+          </div>
+
+          {/* Category Slider */}
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`text-xs font-bold px-4 py-2 rounded-full whitespace-nowrap transition-all border cursor-pointer ${
+                  selectedCategory === cat
+                    ? "bg-[#D4537E] text-white border-transparent shadow"
+                    : "bg-white text-gray-700 border-gray-200 hover:border-pink-200"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Services Grid */}
+          {filteredServices.length === 0 ? (
+            <div className="text-center py-16 bg-white border border-rose-100/40 rounded-3xl space-y-4">
+              <HelpCircle className="h-10 w-10 text-gray-300 mx-auto" />
+              <div>
+                <h3 className="text-xs font-bold text-gray-700">No Services Found</h3>
+                <p className="text-[11px] text-gray-400 mt-1">Try refining your keyword search or select a different category.</p>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {filteredServices.map((srv) => (
+                <div key={srv.id} className="bg-white p-5 rounded-2xl border border-rose-100/50 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-start gap-2">
+                      <span className="text-[9px] uppercase font-bold text-[#1D9E75] bg-teal-50 px-2 py-0.5 rounded">
+                        {srv.category}
+                      </span>
+                      <div className="text-right">
+                        <span className="block text-xs font-black text-[#D4537E]">LKR {srv.price.toLocaleString()}</span>
+                      </div>
+                    </div>
+                    <h3 className="text-sm font-extrabold text-gray-800 group-hover:text-[#D4537E] transition-colors">
+                      {srv.name}
+                    </h3>
+                    <p className="text-xs text-gray-500 leading-relaxed font-sans">{srv.description}</p>
+                  </div>
+
+                  <div className="flex justify-between items-center mt-5 pt-3 border-t border-rose-50/50 text-[11px]">
+                    <span className="text-gray-400 font-mono flex items-center gap-1">
+                      <Clock className="h-3.5 w-3.5 text-gray-400 inline" />
+                      <span>{srv.duration} Minutes</span>
+                    </span>
+                    <button
+                      onClick={() => triggerQuickBook(srv.id, "service")}
+                      className="px-3.5 py-1 bg-[#1D9E75] hover:bg-[#15825f] text-white font-bold rounded-lg transition-colors cursor-pointer"
+                    >
+                      Book Ticket
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ----------------- SECTION C: PACKAGES EXPLORER ----------------- */}
+      {activeSection === "packages" && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8" id="section-packages">
+          <div className="text-center max-w-2xl mx-auto space-y-2 pb-2">
+            <span className="text-xs font-extrabold tracking-widest text-[#D4537E] uppercase">Curated Beauty Collections</span>
+            <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Our Ready-to-Use Packages</h1>
+            <p className="text-xs text-gray-500 leading-relaxed font-sans">
+              Combine and save! We bundle our top hair, nails, and facials into beautiful packages. Get up to 30% discount compared to booking services individually.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
+            {packages.map((pkg) => (
+              <div 
+                key={pkg.id} 
+                className={`bg-white rounded-3xl p-6 border flex flex-col justify-between transition-all duration-300 relative overflow-hidden ${
+                  pkg.isPopular 
+                    ? "border-[#D4537E] shadow-lg xl:scale-101 ring-4 ring-[#D4537E]/5" 
+                    : "border-rose-100 shadow-sm hover:border-rose-200 hover:shadow-md"
+                }`}
+              >
+                {pkg.isPopular && (
+                  <div className="absolute top-0 right-0 bg-[#D4537E] text-white text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-bl-xl shadow-sm">
+                    Most Popular
+                  </div>
+                )}
+
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <h3 className="text-md font-bold text-gray-900">{pkg.name}</h3>
+                    <p className="text-xs text-gray-400 font-mono">Bundles: {pkg.services.length} Premium Services</p>
+                  </div>
+
+                  <p className="text-xs text-gray-500 font-sans leading-relaxed">{pkg.description}</p>
+
+                  <div className="bg-[#FAF8F6] p-3 rounded-2xl border border-rose-50/50 flex justify-between items-center">
+                    <div>
+                      <span className="block text-[10px] text-gray-400 font-bold uppercase">Standard Cost</span>
+                      <span className="text-xs text-gray-500 font-sans line-through">LKR {pkg.totalPrice.toLocaleString()}</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="block text-[10px] text-emerald-800 font-bold uppercase">Package Deal</span>
+                      <span className="text-lg font-black text-[#D4537E]">LKR {pkg.discountPrice.toLocaleString()}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 pt-2">
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Inclusions & Perks:</span>
+                    <ul className="text-xs space-y-1.5">
+                      {pkg.inclusions.map((inc, i) => (
+                        <li key={i} className="flex items-start gap-2 text-gray-600 font-sans">
+                          <CheckCircle className="h-3.5 w-3.5 text-[#1D9E75] shrink-0 mt-0.5" />
+                          <span>{inc}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="pt-6 border-t border-rose-50/50 mt-6 grid grid-cols-2 gap-3 items-center">
+                  <span className="text-[10px] text-gray-400 font-sans leading-none">
+                    * Reserve deposit depends on size
+                  </span>
+                  <button 
+                    onClick={() => triggerQuickBook(pkg.id, "package")}
+                    className="w-full py-2 bg-[#D4537E] hover:bg-[#b03f63] text-white text-xs font-bold rounded-lg transition-colors cursor-pointer uppercase tracking-widest"
+                  >
+                    Select Book
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ----------------- SECTION D: 2025 TRENDS INFO BOARD ----------------- */}
+      {activeSection === "trends" && (
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10" id="section-trends">
+          <div className="text-center space-y-2">
+            <span className="text-xs font-extrabold tracking-widest text-[#D4537E] uppercase">Local Insights</span>
+            <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Sri Lankan Hair & Beauty Trends — 2025</h1>
+            <p className="text-xs text-gray-500 leading-relaxed max-w-2xl mx-auto">
+              What's currently driving high revenue and customer requests in urban Sri Lanka? Stay updated with the ultimate aesthetic movements.
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            
+            {/* Trend 1 */}
+            <div className="bg-white p-6 rounded-2xl border border-rose-50 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+              <div className="md:col-span-8 space-y-3">
+                <span className="text-[9px] font-black text-[#1D9E75] bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
+                  TREND #1 • HIGH REVENUE
+                </span>
+                <h3 className="text-base font-extrabold text-gray-800">Advanced Ayurvedic Sandalwood & kasthuri Kaha Facials</h3>
+                <p className="text-xs text-gray-500 leading-relaxed font-sans">
+                  Young professionals are rejecting heavy synthetic skin brighteners in favour of local, organic wild turmeric (Kasthuri Kaha), white sandalwood paste, and red rice scrubs. Perfect for reversing heat rashes, tropical pollution, and intense melasma tanning.
+                </p>
+                <div className="pt-1.5 flex items-center gap-4 text-xs font-bold text-[#D4537E]">
+                  <span>Avg Price: LKR 4,800</span>
+                  <span>•</span>
+                  <span>Demand: +45% this summer</span>
+                </div>
+              </div>
+              <div className="md:col-span-4 bg-[#FAF8F6] p-4 rounded-xl text-center border border-gray-100">
+                <span className="text-[10px] text-gray-400 font-bold block uppercase">Recommended Service</span>
+                <span className="block text-xs font-bold text-gray-800 mt-1">Ayurvedic Herbal Treatment</span>
+                <button 
+                  onClick={() => triggerQuickBook("s2", "service")}
+                  className="mt-3.5 w-full py-1 bg-[#D4537E] hover:bg-[#b03f63] text-white text-[11px] font-bold rounded-lg"
+                >
+                  Book Instant
+                </button>
+              </div>
+            </div>
+
+            {/* Trend 2 */}
+            <div className="bg-white p-6 rounded-2xl border border-rose-50 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+              <div className="md:col-span-8 space-y-3">
+                <span className="text-[9px] font-black text-[#1D9E75] bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
+                  TREND #2 • SOCIAL MEDIA CRAZE
+                </span>
+                <h3 className="text-base font-extrabold text-gray-800">Korean-inspired Pastel Highlights & Balayage</h3>
+                <p className="text-xs text-gray-500 leading-relaxed font-sans">
+                  TikTok and Instagram are driving massive demand for soft coppers, milk tea browns, and dewy ash streaks. These require sophisticated bleaching plexes to protect dark Sri Lankan hair shafts from breaking.
+                </p>
+                <div className="pt-1.5 flex items-center gap-4 text-xs font-bold text-[#D4537E]">
+                  <span>Avg Price: LKR 14,500</span>
+                  <span>•</span>
+                  <span>Audience: 18 – 35 age group</span>
+                </div>
+              </div>
+              <div className="md:col-span-4 bg-[#FAF8F6] p-4 rounded-xl text-center border border-gray-100">
+                <span className="text-[10px] text-gray-400 font-bold block uppercase">Recommended Service</span>
+                <span className="block text-xs font-bold text-gray-800 mt-1">Global Colouring / Highlights</span>
+                <button 
+                  onClick={() => triggerQuickBook("h3", "service")}
+                  className="mt-3.5 w-full py-1 bg-[#D4537E] hover:bg-[#b03f63] text-white text-[11px] font-bold rounded-lg"
+                >
+                  Book Instant
+                </button>
+              </div>
+            </div>
+
+            {/* Trend 3 */}
+            <div className="bg-white p-6 rounded-2xl border border-rose-50 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+              <div className="md:col-span-8 space-y-3">
+                <span className="text-[9px] font-black text-[#1D9E75] bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
+                  TREND #3 • WEDDING ESSENTIAL
+                </span>
+                <h3 className="text-base font-extrabold text-[#2C2C2A]">Traditional Kandyan Bridal Jewels Pinning Excellence</h3>
+                <p className="text-xs text-gray-500 leading-relaxed font-sans">
+                  Modern brides expect complete comfort. Luminae provides luxury pre-wedding keratin hair bonding combined with heavy gold jewelry securing and precise draping (which remains solid through multiple photo outings on local humid beaches).
+                </p>
+                <div className="pt-1.5 flex items-center gap-4 text-xs font-bold text-[#D4537E]">
+                  <span>Avg Price: LKR 65,000</span>
+                  <span>•</span>
+                  <span>Revenue Contribution: Huge</span>
+                </div>
+              </div>
+              <div className="md:col-span-4 bg-[#FAF8F6] p-4 rounded-xl text-center border border-gray-100">
+                <span className="text-[10px] text-gray-400 font-bold block uppercase">Recommended Package</span>
+                <span className="block text-xs font-bold text-gray-800 mt-1 font-serif">Bridal Bliss Bundle</span>
+                <button 
+                  onClick={() => triggerQuickBook("pkg5", "package")}
+                  className="mt-3.5 w-full py-1 bg-[#1D9E75] hover:bg-[#15825f] text-white text-[11px] font-bold rounded-lg"
+                >
+                  Book Bridal Pack
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* ----------------- SECTION E: STORY & ABOUT US ----------------- */}
+      {activeSection === "story" && (
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12" id="section-story">
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div className="space-y-4">
+              <span className="text-xs font-extrabold tracking-widest text-[#D4537E] uppercase">Inception</span>
+              <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight leading-tight">Founder Priyanthi Gunasekara's Vision</h1>
+              <p className="text-xs text-gray-600 leading-relaxed font-sans">
+                Luminae was established with a singular focus: to elevate Sri Lanka's salon standards beyond local competition. Founder Priyanthi holds National Vocational Qualifications (NVQ Level 3) and trained at London's premier styling institutes.
+              </p>
+              <p className="text-xs text-gray-600 leading-relaxed font-sans">
+                "We wanted to build an environment that respected our rich local healing heritage—such as using organic Kasthuri Kaha and Neeladi scalp oils—while equipping our junior trainees with tablets, POS cards, and live CRM notes to treat every guest with individual precision."
+              </p>
+            </div>
+            <div className="bg-white p-6 border border-rose-100 rounded-3xl shadow-sm text-center space-y-4">
+              <Award className="h-12 w-12 text-[#D4537E] mx-auto" />
+              <div className="space-y-1">
+                <h3 className="text-sm font-bold text-gray-800">Authorized Certifications</h3>
+                <p className="text-xs text-gray-500 font-sans">Our salons hold valid approvals from local authorities:</p>
+              </div>
+              <ul className="text-xs text-left mx-auto max-w-xs space-y-2 font-sans bg-[#FAF8F6] p-4 rounded-xl border border-gray-100">
+                <li className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 bg-[#1D9E75] rounded-full"></span>
+                  <span>Registered under Ceylon Chamber of Commerce</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 bg-[#1D9E75] rounded-full"></span>
+                  <span>MOH Sanitary Permit 2026 Cleared</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 bg-[#1D9E75] rounded-full"></span>
+                  <span>All Senior Stylists have NVQ Level 2-3</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Map & WhatsApp directions banner */}
+          <div className="bg-white border border-rose-100 p-6 rounded-3xl flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="space-y-1 text-center sm:text-left">
+              <h3 className="text-sm font-extrabold text-gray-800 flex items-center justify-center sm:justify-start gap-1.5">
+                <MapPin className="h-4 w-4 text-[#D4537E]" />
+                <span>Visit Us or Request Home Dressing</span>
+              </h3>
+              <p className="text-xs text-gray-500 font-sans">Colombo Wijerama Road or Kandy City Center suite. Home bridal service charge +LKR 3,000.</p>
+            </div>
+            <button
+              onClick={() => onNavigate("book")}
+              className="px-5 py-2 whitespace-nowrap bg-[#1D9E75] hover:bg-[#15825f] text-white text-xs font-bold rounded-lg shadow cursor-pointer"
+            >
+              Get Directions/Book
+            </button>
+          </div>
+
+        </div>
+      )}
+
+      {/* ----------------- SECTION F: DYNAMIC BOOKING FLOW WIZARD ----------------- */}
+      {activeSection === "book" && (
+        <div className="max-w-xl mx-auto px-4 py-12" id="section-booking-wizard">
+          <div className="bg-white border border-rose-100 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
+            
+            {/* Steps Track Header */}
+            <div className="flex justify-between items-center pb-4 border-b border-rose-50">
+              <span className="text-xs font-black text-[#D4537E] uppercase tracking-widest flex items-center gap-1">
+                <Sparkles className="h-4 w-4 text-[#D4537E] inline" />
+                <span>Booking Desk</span>
+              </span>
+              <div className="flex gap-1.5 text-xs text-gray-400 font-bold">
+                <span className={bookingStep >= 1 ? "text-[#D4537E]" : ""}>1. Choose</span>
+                <span>/</span>
+                <span className={bookingStep >= 2 ? "text-[#D4537E]" : ""}>2. Schedule</span>
+                <span>/</span>
+                <span className={bookingStep >= 3 ? "text-[#D4537E]" : ""}>3. Pay</span>
+              </div>
+            </div>
+
+            {/* Step 1: Selection */}
+            {bookingStep === 1 && (
+              <div className="space-y-5 animate-fadeIn">
+                <div className="space-y-2">
+                  <h2 className="text-base font-black text-gray-800">What would you like to book?</h2>
+                  <p className="text-xs text-gray-500 font-sans">Select individual service or dynamic value combination packages.</p>
+                </div>
+
+                {/* Tab selector */}
+                <div className="grid grid-cols-2 gap-2 bg-[#FAF8F6] p-1 rounded-lg">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedServiceType("service")}
+                    className={`py-1.5 text-xs font-bold rounded-md transition-all cursor-pointer ${
+                      selectedServiceType === "service" ? "bg-white text-[#D4537E] shadow-sm" : "text-gray-500 hover:text-gray-800"
+                    }`}
+                  >
+                    Individual Service
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedServiceType("package")}
+                    className={`py-1.5 text-xs font-bold rounded-md transition-all cursor-pointer ${
+                      selectedServiceType === "package" ? "bg-white text-[#D4537E] shadow-sm" : "text-gray-500 hover:text-gray-800"
+                    }`}
+                  >
+                    Bundled Package
+                  </button>
+                </div>
+
+                {/* Sublist selection */}
+                {selectedServiceType === "service" ? (
+                  <div className="space-y-2">
+                    <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest">Select Beauty Service:</label>
+                    <select
+                      value={chosenServiceId}
+                      onChange={(e) => setChosenServiceId(e.target.value)}
+                      className="w-full bg-[#FAF8F6] border border-rose-100 rounded-lg p-2.5 text-xs font-sans text-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-300"
+                    >
+                      <option value="">-- Choose from our 22 services --</option>
+                      {services.map(s => (
+                        <option key={s.id} value={s.id}>{s.name} (LKR {s.price.toLocaleString()})</option>
+                      ))}
+                    </select>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest">Select Combo Package:</label>
+                    <select
+                      value={chosenPackageId}
+                      onChange={(e) => setChosenPackageId(e.target.value)}
+                      className="w-full bg-[#FAF8F6] border border-rose-100 rounded-lg p-2.5 text-xs font-sans text-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-300"
+                    >
+                      <option value="">-- Choose from our 8 packages --</option>
+                      {packages.map(p => (
+                        <option key={p.id} value={p.id}>{p.name} (LKR {p.discountPrice.toLocaleString()})</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* Live pricing display */}
+                {((selectedServiceType === "service" && chosenServiceId) || (selectedServiceType === "package" && chosenPackageId)) && (
+                  <div className="bg-[#FAF8F6] border border-pink-100/50 rounded-2xl p-4 space-y-1.5">
+                    <span className="text-[10px] text-gray-400 uppercase font-black tracking-widest">Cost Summary preview:</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-gray-700 font-bold">
+                        {selectedServiceType === "service" 
+                          ? services.find(s => s.id === chosenServiceId)?.name 
+                          : packages.find(p => p.id === chosenPackageId)?.name}
+                      </span>
+                      <span className="text-xs font-black text-[#D4537E]">
+                        LKR {selectedServiceType === "service"
+                          ? services.find(s => s.id === chosenServiceId)?.price.toLocaleString()
+                          : packages.find(p => p.id === chosenPackageId)?.discountPrice.toLocaleString()} /-
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                <div className="pt-2">
+                  <button
+                    onClick={() => {
+                      if (selectedServiceType === "service" && !chosenServiceId) {
+                        alert("Please select a service first.");
+                        return;
+                      }
+                      if (selectedServiceType === "package" && !chosenPackageId) {
+                        alert("Please select a package first.");
+                        return;
+                      }
+                      setBookingStep(2);
+                    }}
+                    className="w-full py-2 bg-[#D4537E] hover:bg-[#b03f63] text-white text-xs font-bold rounded-lg transition-transform hover:scale-[1.01] cursor-pointer text-center flex items-center justify-center gap-1 shadow"
+                  >
+                    <span>Proceed to Schedule</span>
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 2: Date, Time & Specialist */}
+            {bookingStep === 2 && (
+              <form onSubmit={handleCompleteBooking} className="space-y-4 animate-fadeIn">
+                <div className="space-y-2">
+                  <h2 className="text-base font-black text-gray-800">Date & Personal Specialist selection</h2>
+                  <p className="text-xs text-gray-500 font-sans">Pick an open slot. Traditional Kandyan dressings start early.</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Date:</label>
+                    <input
+                      type="date"
+                      value={bookingDate}
+                      onChange={(e) => setBookingDate(e.target.value)}
+                      className="w-full bg-[#FAF8F6] border border-rose-100 rounded-lg p-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-pink-300 font-sans block"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] font-extrabold text-[#2C2C2A] uppercase tracking-widest">Time Slot:</label>
+                    <select
+                      value={bookingTime}
+                      onChange={(e) => setBookingTime(e.target.value)}
+                      className="w-full bg-[#FAF8F6] border border-rose-100 rounded-lg p-2.5 text-xs font-sans text-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-300"
+                      required
+                    >
+                      <option value="09:00">09:00 AM</option>
+                      <option value="11:30">11:30 AM</option>
+                      <option value="14:00">02:00 PM</option>
+                      <option value="16:30">04:30 PM</option>
+                      <option value="18:00">06:00 PM</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-[10px] font-extrabold text-[#2C2C2A] uppercase tracking-widest">Preferred Beautician:</label>
+                  <select
+                    value={bookingStaff}
+                    onChange={(e) => setBookingStaff(e.target.value)}
+                    className="w-full bg-[#FAF8F6] border border-rose-100 rounded-lg p-2.5 text-xs font-sans text-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-300"
+                  >
+                    <option value="unassigned">Any Specialist Stylist (Priyanthi's Choice)</option>
+                    {workers.map(w => (
+                      <option key={w.id} value={w.id}>{w.name} ({w.specialty.slice(0, 2).join(", ")})</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-[10px] font-extrabold text-gray-400 tracking-widest uppercase">Special Notes / Allergies / Hair specifications:</label>
+                  <textarea
+                    value={bookingNotes}
+                    onChange={(e) => setBookingNotes(e.target.value)}
+                    rows={2.5}
+                    placeholder="E.g. sandwood allergy, requests organic strawberry wax..."
+                    className="w-full bg-[#FAF8F6] border border-rose-100 rounded-lg p-2.5 text-xs font-sans text-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-300 resize-none"
+                  />
+                  <span className="block text-[10px] text-gray-400 font-sans leading-none mt-0.5">Note values are added carefully to specialists tablets under the Smart CRM standard.</span>
+                </div>
+
+                <div className="flex gap-2.5 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setBookingStep(1)}
+                    className="py-2 px-4 bg-[#FAF8F6] text-gray-500 font-bold text-xs rounded-lg border border-gray-200"
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 py-2 bg-[#D4537E] hover:bg-[#b03f63] text-white text-xs font-bold rounded-lg transition-transform hover:scale-[1.01] shadow"
+                  >
+                    Confirm Booking Details
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* Step 3: LankaQR invoice mockup confirmation */}
+            {bookingStep === 3 && (
+              <div className="text-center space-y-5 animate-fadeIn">
+                <div className="h-10 w-10 bg-emerald-100 text-emerald-800 rounded-full flex items-center justify-center mx-auto shadow-sm">
+                  <CheckCircle className="h-6 w-6 stroke-[3]" />
+                </div>
+
+                <div className="space-y-1">
+                  <h2 className="text-md font-bold text-gray-800">Booking Successfully Logged!</h2>
+                  <p className="text-xs text-gray-500 px-4 leading-relaxed font-sans">
+                    Your appointment has been recorded in the register and assigned. LankaQR checkout is available below for fast discount processing.
+                  </p>
+                </div>
+
+                {/* LankaQR Mockup Card */}
+                <div className="bg-[#FAF8F6] border border-rose-200/50 p-4 rounded-2xl mx-auto max-w-sm space-y-4">
+                  <span className="text-[10px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded font-extrabold border border-emerald-200">
+                    SAMPATH / BOC / CENTRAL BANK LANKAQR
+                  </span>
+                  
+                  {/* QR graphic mockup */}
+                  <div className="h-32 w-32 bg-white border border-gray-100 p-2 mx-auto flex flex-col justify-between relative">
+                    {/* Visual QR simulation lines */}
+                    <div className="border-4 border-gray-900 h-10 w-10 absolute top-2 left-2"></div>
+                    <div className="border-4 border-gray-900 h-10 w-10 absolute top-2 right-2"></div>
+                    <div className="border-4 border-gray-900 h-10 w-10 absolute bottom-2 left-2"></div>
+                    <div className="absolute inset-0 m-auto h-20 w-20 flex flex-wrap gap-1 opacity-70 p-2 justify-center items-center">
+                      {[1,2,3,4,5,6,7,8,9,10,11,12].map(v => (
+                        <span key={v} className="bg-gray-800 h-3.5 w-3.5 rounded-sm inline-block"></span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <span className="block text-[10px] text-gray-400 font-extrabold tracking-widest">MERCHANT: LUMINAE PARLOUR Colombo</span>
+                    <span className="block text-xs font-bold text-gray-700">Amount: LKR {selectedServiceType === "service" ? services.find(s=>s.id===chosenServiceId)?.price.toLocaleString() : packages.find(p=>p.id===chosenPackageId)?.discountPrice.toLocaleString()} /=</span>
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    onClick={() => {
+                      setBookingStep(1);
+                      onNavigate("customer-dashboard");
+                    }}
+                    className="px-6 py-2 bg-[#1D9E75] hover:bg-[#15825f] text-white text-xs font-bold rounded-lg transition-colors cursor-pointer"
+                  >
+                    View My Customer Portal
+                  </button>
+                </div>
+              </div>
+            )}
+
+          </div>
+        </div>
+      )}
+
+      {/* ----------------- SECTION G: SIGNED CUSTOMER PORTAL & LOYALTY ----------------- */}
+      {activeSection === "customer-dashboard" && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10" id="section-customer-dashboard">
+          
+          {/* Header row with customer status card */}
+          <div className="bg-white border border-rose-100 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="inline-block relative h-10 w-10 rounded-full bg-gradient-to-tr from-[#D4537E] to-rose-200 text-white flex items-center justify-center font-bold">
+                  S
+                </span>
+                <div>
+                  <h1 className="text-xl font-black text-[#2C2C2A]">{currentUser?.name || "Loyal Member"}</h1>
+                  <span className="text-xs text-gray-400 font-mono">Member ID: LUMIN-84959 | Joined Mar 2025</span>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 font-sans max-w-lg leading-relaxed">
+                Welcome to your Luminae Portal Dashboard. Schedule and cancel appointments, check recent treatment summaries, and view and redeem loyalty tiers.
+              </p>
+            </div>
+
+            {/* Loyalty points card with dynamic progress bar */}
+            <div className="w-full md:w-80 bg-gradient-to-br from-[#FAF8F6] to-rose-50/20 p-5 rounded-2xl border border-rose-100 shadow-inner space-y-3">
+              <div className="flex justify-between items-center">
+                <div className="space-y-0.5">
+                  <span className="text-[10px] font-bold text-[#D4537E] uppercase block tracking-wider">Premium Tier</span>
+                  <span className={`text-[11px] font-black uppercase px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded`}>{getTier()} status</span>
+                </div>
+                <div className="text-right">
+                  <span className="block text-2xl font-black text-[#D4537E]">{loyaltyPoints}</span>
+                  <span className="text-[9px] font-bold text-gray-400 block uppercase">Beauty points</span>
+                </div>
+              </div>
+
+              {/* Progress bar to next reward (Silver / Gold status) */}
+              <div className="space-y-1 pt-1">
+                <div className="flex justify-between text-[10px] text-gray-400 font-bold">
+                  <span>Bronze Tier</span>
+                  <span>Goal: 500 Gold (LKR 1,500 Cash Back)</span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden border border-gray-200">
+                  <div 
+                    className="bg-[#D4537E] h-full rounded-full transition-all duration-500" 
+                    style={{ width: `${Math.min(100, (loyaltyPoints / 500) * 100)}%` }}
+                  />
+                </div>
+              </div>
+
+              <span className="block text-[9px] text-[#1D9E75] font-sans font-medium text-center bg-teal-50 border border-teal-100 rounded py-1">
+                Spent LKR {totalSpent.toLocaleString()} so far • Earn 10 points per LKR 1,500 spent!
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            {/* Left Column: Scheduled Appointments */}
+            <div className="lg:col-span-8 space-y-6">
+              
+              <div className="bg-white border border-rose-50 rounded-3xl p-6 shadow-sm space-y-4">
+                <div className="flex justify-between items-center border-b border-rose-50 pb-4">
+                  <h3 className="text-sm font-bold text-gray-800 flex items-center gap-1.5">
+                    <Calendar className="h-4.5 w-4.5 text-[#D4537E]" />
+                    <span>My Upcoming Screenings ({upcomingBookings.length})</span>
+                  </h3>
+                  <button 
+                    onClick={() => onNavigate("book")}
+                    className="text-xs font-bold text-[#D4537E] hover:text-[#b03f63]"
+                  >
+                    + Book New seat
+                  </button>
+                </div>
+
+                {upcomingBookings.length === 0 ? (
+                  <div className="text-center py-10 space-y-2">
+                    <AlertCircle className="h-8 w-8 text-rose-300 mx-auto" />
+                    <p className="text-xs text-gray-500">No appointments scheduled for this week.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3.5">
+                    {upcomingBookings.map((apt) => (
+                      <div key={apt.id} className="p-4 rounded-xl border border-rose-100 bg-[#FAF8F6] flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                        <div className="space-y-1.5">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-gray-800">{apt.serviceName}</span>
+                            <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase border ${
+                              apt.status === "confirmed" ? "bg-emerald-50 text-emerald-800 border-emerald-200" :
+                              apt.status === "started" ? "bg-amber-100 text-amber-800 border-amber-200 animate-pulse" :
+                              "bg-rose-50 text-rose-800 border-rose-200"
+                            }`}>
+                              {apt.status}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-4 text-[11px] text-gray-400 font-mono">
+                            <span>📅 {apt.date} • 🕒 {apt.time}</span>
+                            <span>👤 Stylist: {apt.workerName}</span>
+                            <span>💰 LKR {apt.price.toLocaleString()}</span>
+                          </div>
+                          {apt.notes && (
+                            <p className="text-[11px] text-gray-500 italic bg-white p-1.5 rounded border border-rose-100/50">
+                              Notes: {apt.notes}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="flex sm:flex-col gap-2 items-end">
+                          {apt.status === "pending" && (
+                            <button
+                              onClick={() => {
+                                if (confirm("Are you sure you want to cancel this pending appointment?")) {
+                                  updateAppointmentStatus(apt.id, "cancelled");
+                                }
+                              }}
+                              className="text-xs font-bold text-rose-600 hover:text-rose-800 px-3 py-1 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors cursor-pointer"
+                            >
+                              Cancel
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Past Visits & Reviews */}
+              <div className="bg-white border border-rose-50 rounded-3xl p-6 shadow-sm space-y-4">
+                <h3 className="text-sm font-bold text-gray-800 border-b border-rose-50 pb-4 flex items-center gap-1.5">
+                  <History className="h-4.5 w-4.5 text-[#1D9E75]" />
+                  <span>Historic Visits — Write Review ({pastBookings.length})</span>
+                </h3>
+
+                {pastBookings.length === 0 ? (
+                  <p className="text-xs text-gray-400 text-center py-6 font-sans">No completed treatments available to review yet.</p>
+                ) : (
+                  <div className="space-y-4">
+                    {pastBookings.map((apt) => (
+                      <div key={apt.id} className="p-4 rounded-xl border border-gray-100 space-y-3">
+                        <div className="flex justify-between items-start gap-4">
+                          <div>
+                            <span className="block text-xs font-extrabold text-gray-800">{apt.serviceName}</span>
+                            <span className="block text-[11px] text-gray-400 font-mono">📅 Completed on {apt.date} • Anusha Perera</span>
+                          </div>
+                          <span className="text-xs font-black text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded">Paid LKR {apt.price.toLocaleString()}</span>
+                        </div>
+
+                        {/* Customer Feedback section */}
+                        {apt.feedback ? (
+                          <div className="bg-yellow-50/40 p-3 rounded-lg border border-yellow-100 space-y-1.5">
+                            <div className="flex gap-1">
+                              {Array.from({ length: apt.rating || 5 }).map((_, i) => (
+                                <Star key={i} className="h-3 w-3 text-amber-500 fill-amber-500" />
+                              ))}
+                            </div>
+                            <p className="text-xs text-gray-700 italic font-sans">" {apt.feedback} "</p>
+                          </div>
+                        ) : (
+                          <div>
+                            {reviewAptId === apt.id ? (
+                              <form onSubmit={submitClientReview} className="bg-rose-50/20 p-3 border border-rose-100 rounded-lg space-y-2.5">
+                                <div className="flex items-center gap-3">
+                                  <label className="text-[11px] font-bold text-gray-500 uppercase">Rating Stars (1-5):</label>
+                                  <div className="flex gap-1">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                      <button
+                                        key={star}
+                                        type="button"
+                                        onClick={() => setReviewRating(star)}
+                                        className="focus:outline-none"
+                                      >
+                                        <Star className={`h-4 w-4 ${reviewRating >= star ? "text-amber-500 fill-amber-500" : "text-gray-300"}`} />
+                                      </button>
+                                    ))}
+                                  </div>
+                                </div>
+                                <div className="space-y-1.5">
+                                  <textarea
+                                    value={reviewComment}
+                                    onChange={(e) => setReviewComment(e.target.value)}
+                                    placeholder="Thank the beautician! E.g. outstanding threading result..."
+                                    className="w-full bg-white p-2 text-xs border border-rose-100 rounded focus:outline-none text-gray-800 font-sans resize-none"
+                                    rows={2}
+                                    required
+                                  />
+                                  <div className="flex justify-end gap-2">
+                                    <button 
+                                      type="button" 
+                                      onClick={() => setReviewAptId(null)}
+                                      className="text-[10px] text-gray-400 px-2 py-1 hover:underline"
+                                    >
+                                      Maybe Later
+                                    </button>
+                                    <button 
+                                      type="submit" 
+                                      className="text-[10px] font-bold text-white bg-[#1D9E75] px-3.5 py-1 rounded"
+                                    >
+                                      Submit Review
+                                    </button>
+                                  </div>
+                                </div>
+                              </form>
+                            ) : (
+                              <button
+                                onClick={() => setReviewAptId(apt.id)}
+                                className="text-xs text-[#D4537E] font-bold hover:underline flex items-center gap-1 cursor-pointer"
+                              >
+                                <Star className="h-3.5 w-3.5" />
+                                <span>Leave treatment feedback</span>
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+            </div>
+
+            {/* Right Column: Dynamic Loyalty Guide */}
+            <div className="lg:col-span-4 space-y-6">
+              
+              <div className="bg-white border border-rose-50 rounded-3xl p-5 shadow-sm space-y-4">
+                <span className="text-[10px] font-extrabold text-[#D4537E] uppercase block tracking-widest">Rewards Club</span>
+                <h3 className="text-sm font-bold text-gray-800">Benefits & Membership tiers</h3>
+                <p className="text-xs text-gray-500 leading-relaxed font-sans">
+                  Treat yourself to loyalty points for every service and claim cashback perks.
+                </p>
+
+                <ul className="text-xs space-y-3 font-sans">
+                  <li className="flex gap-2 p-2 rounded-lg bg-gray-50 border border-gray-100">
+                    <span className="text-amber-800 block text-xs tracking-tight font-black uppercase font-mono">1. BRONZE (Join):</span>
+                    <span className="text-gray-500 block text-[11px]">Receive 5% off student packages, standard email support.</span>
+                  </li>
+                  <li className="flex gap-2 p-2 rounded-lg bg-teal-50/30 border border-teal-100/50">
+                    <span className="text-teal-800 block text-xs tracking-tight font-black uppercase font-mono">2. SILVER (200 pts):</span>
+                    <span className="text-gray-500 block text-[11px]">Free eyebrow threading on birthdays, priority weekend bookings.</span>
+                  </li>
+                  <li className="flex gap-2 p-2 rounded-lg bg-yellow-50/50 border border-yellow-105">
+                    <span className="text-amber-700 block text-xs tracking-tight font-black uppercase font-mono">3. GOLD (500 pts):</span>
+                    <span className="text-gray-500 block text-[11px]">Redeem flat LKR 1,500 cashback, free aromatherapy, zero-deposit reservation.</span>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      )}
+
+    </div>
+  );
+}
