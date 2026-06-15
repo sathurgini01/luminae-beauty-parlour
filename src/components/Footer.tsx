@@ -37,7 +37,7 @@ export default function Footer({ onNavigate }: FooterProps) {
               </span>
             </div>
             <p className="text-xs text-white/62 leading-relaxed font-sans pt-2">
-              Sri Lanka's premium boutique for modern hair, glowing skin, bridal styling, and calm self-care rituals.
+              Sri Lanka's premium boutique for modern hair, glowing skin, men's grooming, event styling, and calm self-care rituals.
             </p>
             <div className="pt-2 text-[10px] text-white/42 space-y-1 font-mono">
               <div>REG NO: LPV-48593/SL</div>
@@ -83,7 +83,7 @@ export default function Footer({ onNavigate }: FooterProps) {
                 <span className="font-semibold">Monday: Closed for Sanitization</span>
               </li>
               <li className="pt-2 border-t border-white/10 text-[10px] text-white/42 leading-relaxed">
-                * Kandyan Bridal styling is available from 04:00 AM on request.
+                * Wedding, groom, and event styling is available from 04:00 AM on request.
               </li>
             </ul>
           </div>
@@ -112,6 +112,17 @@ export default function Footer({ onNavigate }: FooterProps) {
               >
                 Book Appointment
               </button>
+            </div>
+            <div className="pt-2 flex flex-wrap gap-2">
+              {["Instagram", "Facebook", "TikTok"].map((social) => (
+                <a
+                  key={social}
+                  href="#"
+                  className="rounded-full border border-white/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white/55 hover:text-[#F8B8BE] hover:border-[#F8B8BE]/40 transition-colors"
+                >
+                  {social}
+                </a>
+              ))}
             </div>
           </div>
 

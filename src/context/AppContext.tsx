@@ -89,6 +89,40 @@ const normalizeClientNotes = (notes: WorkerNotes[]): WorkerNotes[] => {
   }));
 };
 
+const normalizeServices = (storedServices: Service[]): Service[] => {
+  const storedById = new Map(storedServices.map(service => [service.id, service]));
+  const mergedServices = MOCK_SERVICES.map(mockService => ({
+    ...mockService,
+    ...(storedById.get(mockService.id) || {}),
+    audience: storedById.get(mockService.id)?.audience || mockService.audience || "Everyone"
+  }));
+  const customServices = storedServices
+    .filter(service => !MOCK_SERVICES.some(mockService => mockService.id === service.id))
+    .map(service => ({
+      ...service,
+      audience: service.audience || "Everyone"
+    }));
+
+  return [...mergedServices, ...customServices];
+};
+
+const normalizePackages = (storedPackages: Package[]): Package[] => {
+  const storedById = new Map(storedPackages.map(pkg => [pkg.id, pkg]));
+  const mergedPackages = MOCK_PACKAGES.map(mockPkg => ({
+    ...mockPkg,
+    ...(storedById.get(mockPkg.id) || {}),
+    audience: storedById.get(mockPkg.id)?.audience || mockPkg.audience || "Everyone"
+  }));
+  const customPackages = storedPackages
+    .filter(pkg => !MOCK_PACKAGES.some(mockPkg => mockPkg.id === pkg.id))
+    .map(pkg => ({
+      ...pkg,
+      audience: pkg.audience || "Everyone"
+    }));
+
+  return [...mergedPackages, ...customPackages];
+};
+
 export const AppProviderObj = ({ children }: { children: ReactNode }) => {
   const [hasLoadedStorage, setHasLoadedStorage] = useState(false);
 
@@ -120,8 +154,8 @@ export const AppProviderObj = ({ children }: { children: ReactNode }) => {
     setCurrentUser(normalizeUser(getStoredValue<User | null>("luminae_user", null)));
     setAppointments(normalizeAppointments(getStoredValue("luminae_appointments", MOCK_APPOINTMENTS)));
     setWorkers(getStoredValue("luminae_workers", MOCK_WORKERS));
-    setServices(getStoredValue("luminae_services", MOCK_SERVICES));
-    setPackages(getStoredValue("luminae_packages", MOCK_PACKAGES));
+    setServices(normalizeServices(getStoredValue("luminae_services", MOCK_SERVICES)));
+    setPackages(normalizePackages(getStoredValue("luminae_packages", MOCK_PACKAGES)));
     setInventory(getStoredValue("luminae_inventory", MOCK_INVENTORY));
     setClientNotes(normalizeClientNotes(getStoredValue("luminae_client_notes", MOCK_CLIENT_NOTES)));
     setNotifications(getStoredValue("luminae_notifications", defaultNotifications));

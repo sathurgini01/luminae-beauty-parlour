@@ -19,7 +19,7 @@ const viewToPath: Record<string, string> = {
   landing: "/",
   services: "/services",
   packages: "/packages",
-  trends: "/gallery",
+  trends: "/trends",
   story: "/about",
   book: "/booking",
   login: "/login",
@@ -58,6 +58,9 @@ function MainAppLayout({ initialView }: { initialView: string }) {
     if (window.location.pathname !== nextPath) {
       window.history.pushState({ view }, "", nextPath);
     }
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    });
   };
 
   useEffect(() => {

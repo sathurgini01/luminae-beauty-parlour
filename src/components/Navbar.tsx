@@ -197,7 +197,7 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
                   activeView === "trends" ? "border-[#AF2B2D] text-[#AF2B2D]" : "border-transparent text-[#2C2C2A]/70 hover:text-[#AF2B2D] hover:border-[#AF2B2D]/60"
                 }`}
               >
-                Gallery
+                Trends
               </button>
               <button 
                 onClick={() => handleNavClick("story")}
@@ -339,7 +339,7 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
                 activeView === "trends" ? "bg-[#F8F0EC] text-[#AF2B2D]" : "text-[#2C2C2A]/75 hover:bg-[#F8F0EC] hover:text-[#AF2B2D]"
               }`}
             >
-              Gallery
+              Trends
             </button>
             <button 
               onClick={() => handleNavClick("story")}

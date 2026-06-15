@@ -83,6 +83,7 @@ export default function AdminPortal() {
     addService({
       name: newSrvName,
       category: newSrvCategory,
+      audience: "Everyone",
       price: Number(newSrvPrice),
       duration: Number(newSrvDuration),
       description: newSrvDesc || `Expert quality ${newSrvName} treatment.`
@@ -101,7 +102,8 @@ export default function AdminPortal() {
     if (!newPkgName || !newPkgPrice) return;
 
     addPackage({
-      name: `🌸 ${newPkgName}`,
+      name: newPkgName,
+      audience: "Everyone",
       services: newPkgServices.length ? newPkgServices : ["Custom treatment"],
       totalPrice: Number(newPkgPrice) * 1.25, // Mock separate sum
       discountPrice: Number(newPkgPrice),
@@ -261,7 +263,7 @@ export default function AdminPortal() {
               <div className="space-y-4 pt-2">
                 <div className="space-y-1.5">
                   <div className="flex justify-between items-center text-xs font-sans">
-                    <span className="font-bold text-gray-700">Bridal Dressing & Special Occasions (Kandyan focus)</span>
+                    <span className="font-bold text-gray-700">Wedding, Groom & Special Occasion Styling</span>
                     <span className="font-mono text-gray-400">LKR 65,000 / 70% share</span>
                   </div>
                   <div className="w-full bg-gray-100 rounded-full h-3 border border-gray-100 overflow-hidden">
@@ -292,7 +294,7 @@ export default function AdminPortal() {
 
               <div className="pt-4 border-t border-rose-50/50 mt-4 text-xs font-sans text-gray-500 flex items-center justify-between">
                 <span>* Active billing based on completed appointments</span>
-                <span>Top Revenue Stream: <strong>Kandyan Bridal packages</strong></span>
+                <span>Top Revenue Stream: <strong>Wedding & event packages</strong></span>
               </div>
             </div>
 

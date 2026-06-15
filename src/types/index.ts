@@ -40,6 +40,7 @@ export interface Service {
   id: string;
   name: string;
   category: string;
+  audience: "Men" | "Women" | "Everyone";
   price: number; // LKR
   duration: number; // in minutes
   description: string;
@@ -48,6 +49,7 @@ export interface Service {
 export interface Package {
   id: string;
   name: string;
+  audience: "Men" | "Women" | "Everyone";
   services: string[]; // List of service services inside
   totalPrice: number; // Standard sum in LKR
   discountPrice: number; // Bundled offer price in LKR

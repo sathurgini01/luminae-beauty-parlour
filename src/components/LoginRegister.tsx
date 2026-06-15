@@ -101,8 +101,8 @@ export default function LoginRegister({ initialMode, onSuccess, onNavigate }: Lo
                mode === "register" ? "Become a Luminae Member" : "Reset Portal Password"}
             </h2>
             <p className="text-xs text-gray-400 font-sans leading-relaxed">
-              {mode === "login" ? "Sign in to manage appointments, check loyalty points, and view your beauty history." :
-               mode === "register" ? "Join our loyalty rewards program and lock in Kandyan bridal slots." :
+              {mode === "login" ? "Sign in to manage appointments, check loyalty points, and view your beauty or grooming history." :
+               mode === "register" ? "Join our loyalty rewards program and reserve hair, skin, grooming, nails, or event styling slots." :
                "Type your email line to retrieve password reset links."}
             </p>
           </div>

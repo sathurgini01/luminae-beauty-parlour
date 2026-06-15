@@ -7,7 +7,7 @@ import React, { useState } from "react";
 import { useAppState } from "../context/AppContext";
 import { 
   Sparkles, Gift, Clock, Calendar, CheckCircle, Search, Scissors, 
-  MapPin, Phone, HelpCircle, Star, Palette, Award, Trash2, ChevronRight, 
+  MapPin, Phone, Mail, MessageCircle, HelpCircle, Star, Palette, Award, Trash2, ChevronRight, 
   ArrowRight, ShieldCheck, Heart, User, Sparkle, AlertCircle, ShoppingBag, 
   History, Eye, Droplets, Flower2, Gem, HandHeart, Leaf, Waves, Crown, Paintbrush
 } from "lucide-react";
@@ -16,7 +16,7 @@ import { Service, Package, Appointment } from "../types";
 import { COMPARISON_ERAS } from "../lib/mockData";
 
 // @ts-ignore
-import beautyHeroModelData from "../assets/images/home-beauty-hero-flower.png";
+import beautyHeroModelData from "../assets/images/home-unisex-beauticians-hero.png";
 // @ts-ignore
 import haircutImgData from "../assets/images/style_haircut_cutting.png";
 // @ts-ignore
@@ -24,19 +24,49 @@ import skinFacialImgData from "../assets/images/style_skin_facial_men.png";
 // @ts-ignore
 import nailsImgData from "../assets/images/style_nails_polish.png";
 // @ts-ignore
-import teamOliviaData from "../assets/images/team_olivia_1781258208138.jpg";
+import teamKavinduMaleBeauticianData from "../assets/images/team_kavindu_male_beautician.png";
 // @ts-ignore
-import teamAmeliaData from "../assets/images/team_amelia_1781258227019.jpg";
+import teamDilshanBlowdryData from "../assets/images/team_dilshan_blowdry.png";
 // @ts-ignore
-import teamEmilyData from "../assets/images/team_emily_1781258242234.jpg";
+import teamAnushaFacialMaskData from "../assets/images/team_anusha_facial_mask.png";
+// @ts-ignore
+import teamSanduniNailPolishData from "../assets/images/team_sanduni_nail_polish.png";
+// @ts-ignore
+import aboutLuminaeUnisexStylistsData from "../assets/images/about_luminae_unisex_stylists.png";
+// @ts-ignore
+import gallerySalonInteriorData from "../assets/images/gallery_salon_interior.png";
+// @ts-ignore
+import galleryGroomPrepData from "../assets/images/gallery_groom_prep.png";
+// @ts-ignore
+import galleryMenHairWashData from "../assets/images/gallery_men_hair_wash.png";
+// @ts-ignore
+import galleryBridalPrepData from "../assets/images/gallery_bridal_prep.png";
+// @ts-ignore
+import galleryHairWashData from "../assets/images/gallery_hair_wash.png";
+// @ts-ignore
+import galleryProductsToolsData from "../assets/images/gallery_products_tools.png";
+// @ts-ignore
+import galleryReceptionPaymentData from "../assets/images/gallery_reception_payment.png";
+// @ts-ignore
+import galleryThreadingWaxingData from "../assets/images/gallery_threading_waxing.png";
 
 const beautyHeroModel = beautyHeroModelData.src;
 const haircutImg = haircutImgData.src;
 const skinFacialImg = skinFacialImgData.src;
 const nailsImg = nailsImgData.src;
-const teamOlivia = teamOliviaData.src;
-const teamAmelia = teamAmeliaData.src;
-const teamEmily = teamEmilyData.src;
+const teamKavinduMaleBeautician = teamKavinduMaleBeauticianData.src;
+const teamDilshanBlowdry = teamDilshanBlowdryData.src;
+const teamAnushaFacialMask = teamAnushaFacialMaskData.src;
+const teamSanduniNailPolish = teamSanduniNailPolishData.src;
+const aboutLuminaeUnisexStylists = aboutLuminaeUnisexStylistsData.src;
+const gallerySalonInterior = gallerySalonInteriorData.src;
+const galleryGroomPrep = galleryGroomPrepData.src;
+const galleryMenHairWash = galleryMenHairWashData.src;
+const galleryBridalPrep = galleryBridalPrepData.src;
+const galleryHairWash = galleryHairWashData.src;
+const galleryProductsTools = galleryProductsToolsData.src;
+const galleryReceptionPayment = galleryReceptionPaymentData.src;
+const galleryThreadingWaxing = galleryThreadingWaxingData.src;
 
 interface CustomerPortalProps {
   activeSection: string;
@@ -61,23 +91,33 @@ const serviceIconMap: Record<string, LucideIcon> = {
   h5: Waves,
   h6: Leaf,
   h7: User,
+  h8: Sparkles,
+  h9: Scissors,
+  h10: User,
   s1: Flower2,
   s2: Leaf,
   s3: Sparkles,
   s4: Sparkle,
   s5: Paintbrush,
+  s6: Droplets,
+  s7: ShieldCheck,
+  s8: User,
   n1: Gem,
   n2: Sparkles,
   n3: Palette,
   n4: HandHeart,
+  n5: HandHeart,
   w1: HandHeart,
   w2: ShieldCheck,
   w3: Droplets,
+  w4: ShieldCheck,
   b1: Crown,
   b2: Heart,
   b3: Award,
+  b4: Crown,
   v1: Waves,
-  v2: Leaf
+  v2: Leaf,
+  v3: Waves
 };
 
 const branchLocations = [
@@ -89,7 +129,7 @@ const branchLocations = [
     hours: "Tue - Fri: 9.00 AM - 7.00 PM",
     weekendHours: "Sat - Sun: 8.30 AM - 8.00 PM",
     phone: "+94 77 123 4567",
-    note: "Best for bridal consultations, hair styling, facials, and full treatment packages."
+    note: "Best for haircut consultations, hair styling, facials, grooming, bridal care, and full treatment packages."
   },
   {
     order: "02",
@@ -99,12 +139,83 @@ const branchLocations = [
     hours: "Tue - Fri: 9.30 AM - 6.30 PM",
     weekendHours: "Sat - Sun: 8.30 AM - 7.30 PM",
     phone: "+94 11 234 5678",
-    note: "Ideal for bridal dressing, gel nails, threading, and express beauty appointments."
+    note: "Ideal for gel nails, threading, skin care, men's grooming, and express beauty appointments."
+  },
+  {
+    order: "03",
+    name: "Jaffna Heritage Studio",
+    label: "Northern Branch",
+    address: "No. 18, Hospital Road, Jaffna",
+    hours: "Tue - Fri: 9.00 AM - 6.30 PM",
+    weekendHours: "Sat - Sun: 8.30 AM - 7.00 PM",
+    phone: "+94 21 222 4589",
+    note: "Best for bridal saree styling, threading, facials, haircuts, and family beauty appointments."
+  },
+  {
+    order: "04",
+    name: "Galle Fort Boutique",
+    label: "Southern Branch",
+    address: "32, Lighthouse Street, Galle Fort",
+    hours: "Tue - Fri: 9.30 AM - 6.30 PM",
+    weekendHours: "Sat - Sun: 8.30 AM - 7.30 PM",
+    phone: "+94 91 224 7788",
+    note: "Popular for bridal trials, resort-ready nails, waxing, blowouts, and facial glow packages."
+  },
+  {
+    order: "05",
+    name: "Negombo Coastal Salon",
+    label: "Western Coast",
+    address: "76, Lewis Place, Negombo",
+    hours: "Tue - Fri: 9.00 AM - 7.00 PM",
+    weekendHours: "Sat - Sun: 8.30 AM - 8.00 PM",
+    phone: "+94 31 223 8090",
+    note: "Great for destination wedding prep, hair colour, men's grooming, waxing, and quick polish finishes."
+  },
+  {
+    order: "06",
+    name: "Kurunegala City Parlour",
+    label: "North Western",
+    address: "14, Kandy Road, Kurunegala",
+    hours: "Tue - Fri: 9.00 AM - 6.30 PM",
+    weekendHours: "Sat - Sun: 8.30 AM - 7.30 PM",
+    phone: "+94 37 222 6199",
+    note: "Convenient for haircuts, rebonding consultations, facials, threading, and student packages."
+  },
+  {
+    order: "07",
+    name: "Matara Glow Studio",
+    label: "Deep South",
+    address: "22, Beach Road, Matara",
+    hours: "Tue - Fri: 9.30 AM - 6.30 PM",
+    weekendHours: "Sat - Sun: 8.30 AM - 7.30 PM",
+    phone: "+94 41 223 7440",
+    note: "Focused on skin care, bridal party prep, hair styling, pedicures, and tropical humidity-safe finishes."
+  },
+  {
+    order: "08",
+    name: "Batticaloa Lagoon Suite",
+    label: "Eastern Branch",
+    address: "9, Lake Road, Batticaloa",
+    hours: "Tue - Fri: 9.00 AM - 6.00 PM",
+    weekendHours: "Sat - Sun: 8.30 AM - 7.00 PM",
+    phone: "+94 65 222 5166",
+    note: "Ideal for event makeup, threading, facials, hair treatments, and family appointment blocks."
   }
 ];
 
 const getServiceIcon = (service: Service) => {
   return serviceIconMap[service.id] || categoryIconMap[service.category] || Sparkles;
+};
+
+const getAudienceTagClasses = (audience?: Service["audience"] | Package["audience"]) => {
+  if (audience === "Men") return "bg-sky-50 text-sky-700 border-sky-100";
+  if (audience === "Women") return "bg-yellow-50 text-yellow-700 border-yellow-100";
+  return "bg-emerald-50 text-emerald-700 border-emerald-100";
+};
+
+const getAudienceLabel = (audience?: Service["audience"] | Package["audience"]) => {
+  if (!audience) return "For Everyone";
+  return audience === "Everyone" ? "For Everyone" : `For ${audience}`;
 };
 
 export default function CustomerPortal({ activeSection, onNavigate }: CustomerPortalProps) {
@@ -126,8 +237,14 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
   // Booking Wizard State
   const [bookingStep, setBookingStep] = useState(1);
   const [selectedServiceType, setSelectedServiceType] = useState<"service" | "package">("service");
-  const [chosenServiceId, setChosenServiceId] = useState("");
+  const [chosenServiceIds, setChosenServiceIds] = useState<string[]>([]);
   const [chosenPackageId, setChosenPackageId] = useState("");
+  const [bookingCustomerName, setBookingCustomerName] = useState("");
+  const [bookingCustomerPhone, setBookingCustomerPhone] = useState("");
+  const [bookingCustomerEmail, setBookingCustomerEmail] = useState("");
+  const [bookingCustomerGender, setBookingCustomerGender] = useState<"Male" | "Female" | "Prefer not to say">("Prefer not to say");
+  const [bookingBranch, setBookingBranch] = useState("Colombo 07 Flagship");
+  const [bookingPaymentMethod, setBookingPaymentMethod] = useState("Pay at salon");
   const [bookingDate, setBookingDate] = useState("");
   const [bookingTime, setBookingTime] = useState("");
   const [bookingStaff, setBookingStaff] = useState("unassigned");
@@ -176,22 +293,45 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
   const triggerQuickBook = (id: string, type: "service" | "package") => {
     setSelectedServiceType(type);
     if (type === "service") {
-      setChosenServiceId(id);
+      setChosenServiceIds([id]);
       setChosenPackageId("");
     } else {
       setChosenPackageId(id);
-      setChosenServiceId("");
+      setChosenServiceIds([]);
     }
     setBookingStep(1);
     onNavigate("book");
   };
 
+  const toggleChosenService = (serviceId: string) => {
+    setChosenServiceIds(prev => (
+      prev.includes(serviceId)
+        ? prev.filter(id => id !== serviceId)
+        : [...prev, serviceId]
+    ));
+  };
+
+  const selectedServices = services.filter(service => chosenServiceIds.includes(service.id));
+  const selectedPackage = packages.find(pkg => pkg.id === chosenPackageId);
+  const bookingPreviewName = selectedServiceType === "service"
+    ? selectedServices.map(service => service.name).join(" + ")
+    : selectedPackage?.name || "";
+  const bookingPreviewPrice = selectedServiceType === "service"
+    ? selectedServices.reduce((sum, service) => sum + service.price, 0)
+    : selectedPackage?.discountPrice || 0;
+  const bookingPreviewDuration = selectedServiceType === "service"
+    ? selectedServices.reduce((sum, service) => sum + service.duration, 0)
+    : 120;
+
   // Create booking
   const handleCompleteBooking = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentUser) {
-      alert("Please log in to complete your beauty parlour booking.");
-      onNavigate("login");
+    const customerName = bookingCustomerName.trim() || currentUser?.name || "";
+    const customerPhone = bookingCustomerPhone.trim() || currentUser?.phone || "";
+    const customerEmail = bookingCustomerEmail.trim() || currentUser?.email || "";
+
+    if (!customerName || !customerPhone || !customerEmail) {
+      alert("Please enter full name, phone number, and email.");
       return;
     }
 
@@ -201,34 +341,38 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
     let bDuration = 45;
 
     if (selectedServiceType === "service") {
-      const selectedSrv = services.find(s => s.id === chosenServiceId);
-      if (!selectedSrv) return;
-      bName = selectedSrv.name;
-      bPrice = selectedSrv.price;
-      bCategory = selectedSrv.category;
-      bDuration = selectedSrv.duration;
+      if (selectedServices.length === 0) return;
+      bName = selectedServices.map(service => service.name).join(" + ");
+      bPrice = selectedServices.reduce((sum, service) => sum + service.price, 0);
+      bCategory = selectedServices.length === 1 ? selectedServices[0].category : "Multi-Service Booking";
+      bDuration = selectedServices.reduce((sum, service) => sum + service.duration, 0);
     } else {
-      const selectedPkg = packages.find(p => p.id === chosenPackageId);
-      if (!selectedPkg) return;
-      bName = selectedPkg.name;
-      bPrice = selectedPkg.discountPrice;
+      if (!selectedPackage) return;
+      bName = selectedPackage.name;
+      bPrice = selectedPackage.discountPrice;
       bCategory = "Bridal & Combo Packages";
       bDuration = 120; // Avg package
     }
 
     addAppointment({
-      clientId: currentUser.id,
-      clientName: currentUser.name,
-      clientPhone: currentUser.phone,
+      clientId: currentUser?.id || `guest_${Date.now()}`,
+      clientName: customerName,
+      clientPhone: customerPhone,
       workerId: bookingStaff,
-      serviceId: selectedServiceType === "service" ? chosenServiceId : chosenPackageId,
+      serviceId: selectedServiceType === "service" ? chosenServiceIds.join(",") : chosenPackageId,
       serviceName: bName,
       category: bCategory,
       date: bookingDate || new Date().toISOString().split("T")[0],
       time: bookingTime || "10:00",
       price: bPrice,
       duration: bDuration,
-      notes: bookingNotes
+      notes: [
+        `Email: ${customerEmail}`,
+        `Customer gender: ${bookingCustomerGender}`,
+        `Branch: ${bookingBranch}`,
+        `Payment method: ${bookingPaymentMethod}`,
+        bookingNotes ? `Notes: ${bookingNotes}` : ""
+      ].filter(Boolean).join(" | ")
     });
 
     // Reset steps
@@ -257,7 +401,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
             <div className="absolute inset-0 overflow-hidden">
               <img
                 src={beautyHeroModel}
-                alt="Luminae beauty model with pink flowers"
+                alt="Men and women receiving beauty and grooming care at Luminae"
                 referrerPolicy="no-referrer"
                 className="h-full w-full object-cover object-center opacity-100 animate-heroZoom"
               />
@@ -267,31 +411,38 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[760px] flex items-center">
               <div className="max-w-3xl pt-12 pb-16 animate-heroCopy">
                 <div className="flex items-center gap-3">
-                  <span className="text-[11px] tracking-[0.28em] uppercase font-extrabold text-[#D95F8D]">Look Good, Feel Beautiful</span>
+                  <span className="text-[11px] tracking-[0.28em] uppercase font-extrabold text-[#D95F8D]">Look Good, Feel Confident</span>
                   <span className="h-px w-16 bg-[#D95F8D]/35" />
                 </div>
                 <h1 className="mt-8 text-5xl sm:text-6xl lg:text-7xl text-[#1F1E1D] font-serif font-light leading-[1.08]">
-                  Enhance Your Beauty, <br />
+                  Groomed, Styled, <br />
                   Reveal Your <span className="italic text-[#D95F8D]">Confidence</span>
                 </h1>
                 <div className="my-8 h-px w-80 max-w-full bg-gradient-to-r from-transparent via-[#D95F8D]/35 to-transparent" />
                 <p className="text-sm sm:text-base text-[#2C2C2A]/65 leading-relaxed max-w-lg">
-                  At Luminae, we believe every woman deserves to feel beautiful and confident. From hair to skincare, we bring out the best in you.
+                  Luminae is a modern beauty and grooming parlour for women and men. From haircuts and beard sculpting to facials, nails, skincare, and event styling, we bring out your best look with care.
                 </p>
                 <div className="mt-8 flex flex-col sm:flex-row gap-4">
+                  <a
+                    href="tel:+94771234567"
+                    className="px-8 py-3 bg-[#AF2B2D] hover:bg-[#8F2023] text-white text-[10px] uppercase font-extrabold tracking-widest rounded-full shadow-lg shadow-[#AF2B2D]/20 transition-colors inline-flex items-center justify-center gap-2"
+                  >
+                    <Phone className="h-3.5 w-3.5" />
+                    <span>Call Now</span>
+                  </a>
                   <button
                     onClick={() => {
                       setSelectedCategory("All");
                       setSearchTerm("");
                       onNavigate("services");
                     }}
-                    className="px-8 py-3 bg-[#D95F8D] hover:bg-[#C94D7C] text-white text-[10px] uppercase font-extrabold tracking-widest rounded-full shadow-lg shadow-[#D95F8D]/20 transition-colors cursor-pointer"
+                    className="px-8 py-3 bg-white hover:bg-[#fffafa] text-[#AF2B2D] text-[10px] uppercase font-extrabold tracking-widest rounded-full shadow-lg shadow-black/5 border border-[#F3C7D4] transition-colors cursor-pointer"
                   >
                     Explore Services
                   </button>
                   <button
                     onClick={() => onNavigate("book")}
-                    className="px-8 py-3 bg-white hover:bg-[#fffafa] text-[#2C2C2A] text-[10px] uppercase font-extrabold tracking-widest rounded-full shadow-lg shadow-black/5 border border-[#2C2C2A]/5 transition-colors cursor-pointer"
+                    className="px-8 py-3 bg-[#D95F8D] hover:bg-[#C94D7C] text-white text-[10px] uppercase font-extrabold tracking-widest rounded-full shadow-lg shadow-[#D95F8D]/20 transition-colors cursor-pointer"
                   >
                     Book Appointment
                   </button>
@@ -330,6 +481,48 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
             </div>
           </section>
 
+          {/* About Us */}
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10" id="section-about">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+              <div className="lg:col-span-5 relative">
+                <div className="aspect-[4/5] overflow-hidden rounded-[2rem] border border-[#F3C7D4]/60 shadow-sm bg-white">
+                  <img
+                    src={aboutLuminaeUnisexStylists}
+                    alt="Male and female Luminae stylists holding hair tools in a unisex salon"
+                    className="h-full w-full object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+                <div className="absolute -bottom-5 right-5 bg-white border border-[#F3C7D4]/80 rounded-2xl px-5 py-4 shadow-lg max-w-[14rem]">
+                  <span className="block text-3xl font-serif text-[#D95F8D]">10+</span>
+                  <span className="block text-[10px] uppercase tracking-widest font-black text-[#2C2C2A]/55">Years of local beauty care</span>
+                </div>
+              </div>
+
+              <div className="lg:col-span-7 space-y-5">
+                <span className="text-[10px] text-[#AF2B2D] tracking-[0.22em] font-sans font-extrabold uppercase block">About Luminae</span>
+                <h2 className="text-3xl md:text-4xl font-serif text-[#2C2C2A] font-light leading-tight">
+                  A Sri Lankan beauty parlour built on trust, comfort, and careful finishing.
+                </h2>
+                <p className="text-sm text-[#2C2C2A]/60 leading-relaxed max-w-2xl">
+                  Luminae Beauty & Parlour was founded by Priyanthi Gunasekara to bring modern salon standards into everyday Sri Lankan beauty care. Our Colombo 07 flagship and Kandy suite serve women, men, students, brides, and working professionals with hygienic treatments, honest advice, and clear pricing.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                  {[
+                    ["Colombo 07", "Flagship branch with full hair, skin, grooming, and bridal services."],
+                    ["Kandy Suite", "Easy city-centre visits for nails, grooming, facials, and threading."],
+                    ["Local Care", "LankaQR, bank transfer, card, and cash payment support."]
+                  ].map(([title, copy]) => (
+                    <div key={title} className="bg-white border border-rose-100/70 rounded-2xl p-4 shadow-sm">
+                      <h3 className="text-xs font-extrabold text-[#2C2C2A]">{title}</h3>
+                      <p className="text-[11px] text-gray-500 leading-relaxed mt-2">{copy}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
           {/* Our Services Category Cards bottom of Image 1 */}
           <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
@@ -340,7 +533,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                   Our Services
                 </h2>
                 <p className="text-xs text-gray-500 leading-relaxed font-sans max-w-sm">
-                  Beyond haircuts, discover a comprehensive range of premium services, from creative coloring & balayage, intensive Ayurvedic skin treatments, to high-fashion hairstyles.
+                  Beyond haircuts, discover premium care for every guest: creative colouring, beard grooming, Ayurvedic facials, nails, waxing, massage, and special occasion styling.
                 </p>
                 <div className="pt-2">
                   <button 
@@ -455,7 +648,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 <span className="text-[10px] text-[#D95F8D] tracking-[0.25em] font-sans font-bold uppercase block">LUMINAE CEYLON</span>
                 <h2 className="text-3xl sm:text-4xl font-serif font-light text-[#2C2C2A] leading-tight">Why Choose Us</h2>
                 <p className="text-xs text-[#2C2C2A]/60 leading-relaxed font-sans pr-4 pt-1">
-                  Discover premium styling, organic skin therapies, and personal consultations tailored to your natural beauty. Every treatment is delivered with trained artistry and hygienic care.
+                  Discover premium styling, grooming, organic skin therapies, and personal consultations tailored to your look and lifestyle. Every treatment is delivered with trained artistry and hygienic care.
                 </p>
                 
                 <div className="pt-6 border-t border-[#F3C7D4]/80 flex items-center gap-10">
@@ -465,7 +658,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                   </div>
                   <div className="w-px h-10 bg-[#F3C7D4]" />
                   <div>
-                    <span className="block text-4xl font-serif font-light text-[#D95F8D]">15</span>
+                    <span className="block text-4xl font-serif font-light text-[#D95F8D]">8</span>
                     <span className="text-[9px] uppercase font-bold tracking-widest text-[#2C2C2A]/45 block mt-1">Salons Around Sri Lanka</span>
                   </div>
                 </div>
@@ -529,40 +722,44 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                   <span className="text-[10px] text-[#AF2B2D] tracking-[0.2em] font-sans font-extrabold uppercase block">LUMINAE EXPERTS</span>
                   <h2 className="text-3xl md:text-4xl font-serif text-[#2C2C2A] font-light leading-tight">Our Team</h2>
                   <p className="text-xs text-gray-500 leading-relaxed font-sans max-w-sm">
-                    Entrust your beauty locks to our team of exceptionally skilled and creative stylists, certified with top NVQ honors.
+                    Meet the Luminae specialists behind every polished finish, glowing facial, bridal makeover, and clean grooming appointment.
                   </p>
                 </div>
 
                 {/* Team triggers & buttons */}
                 <div className="space-y-4 pt-2">
                   <button 
-                    onClick={() => onNavigate("story")}
+                    onClick={() => onNavigate("book")}
                     className="px-6 py-2.5 bg-[#AF2B2D] hover:bg-[#8F2023] text-white font-bold text-xs uppercase tracking-widest rounded-full transition-transform hover:scale-105 shadow-md inline-flex items-center gap-2 cursor-pointer"
                   >
-                    <span>Read Our Story</span>
+                    <span>Book With Our Team</span>
                   </button>
-                  <div className="flex items-center gap-3 pt-2">
-                    <button className="h-9 w-9 rounded-full border border-neutral-200 flex items-center justify-center text-neutral-500 hover:bg-[#AF2B2D] hover:text-white hover:border-transparent transition-all cursor-pointer">
-                      <span className="text-lg">←</span>
-                    </button>
-                    <button className="h-9 w-9 rounded-full border border-neutral-200 flex items-center justify-center text-neutral-500 hover:bg-[#AF2B2D] hover:text-white hover:border-transparent transition-all cursor-pointer">
-                      <span className="text-lg">→</span>
-                    </button>
+                  <div className="grid grid-cols-2 gap-3 pt-2 max-w-sm">
+                    <div className="rounded-2xl bg-white border border-[#F3C7D4]/70 p-3">
+                      <span className="block text-xl font-serif text-[#D95F8D]">4</span>
+                      <span className="block text-[9px] uppercase tracking-widest font-bold text-[#2C2C2A]/45">Lead Specialists</span>
+                    </div>
+                    <div className="rounded-2xl bg-white border border-[#F3C7D4]/70 p-3">
+                      <span className="block text-xl font-serif text-[#D95F8D]">7+</span>
+                      <span className="block text-[9px] uppercase tracking-widest font-bold text-[#2C2C2A]/45">Care Categories</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Right Side: Stylist cards stack */}
-              <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
                 {/* Stylist 1 */}
                 <div className="bg-[#E6DCD3] p-3 rounded-2xl border border-black/5 hover:border-[#AF2B2D]/30 transition-all duration-300 shadow-sm flex flex-col justify-between">
                   <div>
                     <div className="aspect-[4/5] rounded-xl overflow-hidden relative group">
-                      <img src={teamOlivia} alt="Olivia Smith" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                      <img src={teamKavinduMaleBeautician} alt="Kavindu Perera male beautician holding salon tools" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                      <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-[#AF2B2D] shadow-sm">Beautician</span>
                     </div>
                     <div className="pt-4 pb-2 px-2 text-center sm:text-left">
-                      <h4 className="text-sm font-serif font-bold text-neutral-800">Olivia Smith</h4>
-                      <p className="text-[10px] uppercase tracking-wider font-semibold text-neutral-500 mt-1">Senior Hairdresser</p>
+                      <h4 className="text-sm font-serif font-bold text-neutral-800">Kavindu Perera</h4>
+                      <p className="text-[10px] uppercase tracking-wider font-semibold text-neutral-500 mt-1">Men's Beauty & Grooming Artist</p>
+                      <p className="text-[11px] text-neutral-500 mt-2 leading-relaxed">Facials, hair care, beard grooming, and clean event-ready styling.</p>
                     </div>
                   </div>
                 </div>
@@ -571,11 +768,13 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 <div className="bg-[#E6DCD3] p-3 rounded-2xl border border-black/5 hover:border-[#AF2B2D]/30 transition-all duration-300 shadow-sm sm:translate-y-4 flex flex-col justify-between">
                   <div>
                     <div className="aspect-[4/5] rounded-xl overflow-hidden relative group">
-                      <img src={teamAmelia} alt="Amelia Brown" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                      <img src={teamDilshanBlowdry} alt="Dilshan Silva blow drying and grooming a client's hair" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                      <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-[#AF2B2D] shadow-sm">Grooming</span>
                     </div>
                     <div className="pt-4 pb-2 px-2 text-center sm:text-left">
-                      <h4 className="text-sm font-serif font-bold text-neutral-800">Amelia Brown</h4>
-                      <p className="text-[10px] uppercase tracking-wider font-semibold text-neutral-500 mt-1">Creative Styling Specialist</p>
+                      <h4 className="text-sm font-serif font-bold text-neutral-800">Dilshan Silva</h4>
+                      <p className="text-[10px] uppercase tracking-wider font-semibold text-neutral-500 mt-1">Men's Grooming Specialist</p>
+                      <p className="text-[11px] text-neutral-500 mt-2 leading-relaxed">Haircuts, beard shaping, scalp care, and wellness massage.</p>
                     </div>
                   </div>
                 </div>
@@ -584,15 +783,72 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 <div className="bg-[#E6DCD3] p-3 rounded-2xl border border-black/5 hover:border-[#AF2B2D]/30 transition-all duration-300 shadow-sm flex flex-col justify-between">
                   <div>
                     <div className="aspect-[4/5] rounded-xl overflow-hidden relative group">
-                      <img src={teamEmily} alt="Emily Walker" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                      <img src={teamAnushaFacialMask} alt="Anusha Perera applying a hydrating facial mask" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                      <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-[#AF2B2D] shadow-sm">Skin Care</span>
                     </div>
                     <div className="pt-4 pb-2 px-2 text-center sm:text-left">
-                      <h4 className="text-sm font-serif font-bold text-neutral-800">Emily Walker</h4>
-                      <p className="text-[10px] uppercase tracking-wider font-semibold text-neutral-500 mt-1">Senior Wedding Specialist</p>
+                      <h4 className="text-sm font-serif font-bold text-neutral-800">Anusha Perera</h4>
+                      <p className="text-[10px] uppercase tracking-wider font-semibold text-neutral-500 mt-1">Skin & Bridal Specialist</p>
+                      <p className="text-[11px] text-neutral-500 mt-2 leading-relaxed">Facials, waxing care, bridal prep, and sensitive-skin notes.</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stylist 4 */}
+                <div className="bg-[#E6DCD3] p-3 rounded-2xl border border-black/5 hover:border-[#AF2B2D]/30 transition-all duration-300 shadow-sm sm:translate-y-4 xl:translate-y-0 flex flex-col justify-between">
+                  <div>
+                    <div className="aspect-[4/5] rounded-xl overflow-hidden relative group">
+                      <img src={teamSanduniNailPolish} alt="Sanduni Jayasekara painting gel nail polish" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                      <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-[#AF2B2D] shadow-sm">Nails</span>
+                    </div>
+                    <div className="pt-4 pb-2 px-2 text-center sm:text-left">
+                      <h4 className="text-sm font-serif font-bold text-neutral-800">Sanduni Jayasekara</h4>
+                      <p className="text-[10px] uppercase tracking-wider font-semibold text-neutral-500 mt-1">Hair, Nails & Waxing Specialist</p>
+                      <p className="text-[11px] text-neutral-500 mt-2 leading-relaxed">Gel nails, hair color, blowouts, waxing, and polish finishes.</p>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
+          </section>
+
+          {/* Gallery */}
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" id="section-gallery">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
+              <div className="space-y-2 max-w-xl">
+                <span className="text-[10px] text-[#AF2B2D] tracking-[0.22em] font-sans font-extrabold uppercase block">Real Parlour Moments</span>
+                <h2 className="text-3xl md:text-4xl font-serif text-[#2C2C2A] font-light leading-tight">Gallery</h2>
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  A quick look at Luminae services, styling stations, nail work, facial care, and specialist-led appointments.
+                </p>
+              </div>
+              <a
+                href="#section-gallery"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-[#FFF7F8] text-[#AF2B2D] text-[10px] uppercase font-extrabold tracking-widest rounded-full border border-[#F3C7D4] shadow-sm transition-colors"
+              >
+                <Eye className="h-3.5 w-3.5" />
+                <span>See Gallery</span>
+              </a>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { src: galleryThreadingWaxing, title: "Salon Interior", span: "md:col-span-2" },
+                { src: galleryGroomPrep, title: "Groom Prep", span: "" },
+                { src: galleryProductsTools, title: "Bridal Prep", span: "" },
+                { src: galleryMenHairWash, title: "Men's Hair Wash", span: "" },
+                { src: gallerySalonInterior, title: "Products & Tools", span: "" },
+                { src: galleryBridalPrep, title: "Reception", span: "" },
+                { src: galleryHairWash, title: "Threading Care", span: "md:col-span-2" }
+              ].map((item) => (
+                <div key={item.title} className={`group relative aspect-[4/3] overflow-hidden rounded-2xl bg-white border border-white shadow-sm ${item.span}`}>
+                  <img src={item.src} alt={`Luminae gallery - ${item.title}`} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" referrerPolicy="no-referrer" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/5 to-transparent opacity-90" />
+                  <span className="absolute bottom-3 left-3 rounded-full bg-white/90 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-[#AF2B2D] shadow-sm">
+                    {item.title}
+                  </span>
+                </div>
+              ))}
             </div>
           </section>
 
@@ -709,7 +965,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                   Our Parlour Locations
                 </h2>
                 <p className="text-xs text-gray-500 leading-relaxed font-sans max-w-sm">
-                  Choose the nearest Luminae branch for your appointment. Colombo 07 is our main flagship, followed by the Kandy luxury suite.
+                  Choose the nearest Luminae branch for your appointment. We now cover 8 key Sri Lankan locations, including Colombo, Kandy, Jaffna, Galle, Negombo, Kurunegala, Matara, and Batticaloa.
                 </p>
                 <button
                   onClick={() => onNavigate("book")}
@@ -766,6 +1022,45 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 ))}
               </div>
             </div>
+
+            <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+              <div className="lg:col-span-8 overflow-hidden rounded-3xl border border-rose-100 shadow-sm bg-white min-h-[320px]">
+                <iframe
+                  title="Luminae Beauty Colombo 07 map"
+                  src="https://www.google.com/maps?q=45%20Wijerama%20Mawatha%20Colombo%2007%20Sri%20Lanka&output=embed"
+                  className="h-full min-h-[320px] w-full border-0"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+              <div className="lg:col-span-4 bg-white border border-rose-100/70 rounded-3xl p-6 shadow-sm flex flex-col justify-between gap-6">
+                <div className="space-y-3">
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#AF2B2D]">Walk-in Info</span>
+                  <h3 className="text-xl font-serif font-light text-[#2C2C2A]">Open hours, visits, and payments</h3>
+                  <p className="text-xs text-gray-500 leading-relaxed">
+                    Appointments are recommended for bridal, colouring, rebonding, facial, and package bookings. Short services can be checked by WhatsApp before visiting.
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-3 text-[11px]">
+                  <div className="rounded-2xl bg-[#F8F0EC] p-3">
+                    <span className="block font-black text-[#2C2C2A]">Tue - Fri</span>
+                    <span className="text-gray-500">9.00 AM - 7.00 PM</span>
+                  </div>
+                  <div className="rounded-2xl bg-[#F8F0EC] p-3">
+                    <span className="block font-black text-[#2C2C2A]">Weekend</span>
+                    <span className="text-gray-500">8.30 AM - 8.00 PM</span>
+                  </div>
+                  <div className="rounded-2xl bg-[#F8F0EC] p-3">
+                    <span className="block font-black text-[#2C2C2A]">Payments</span>
+                    <span className="text-gray-500">Cash, card, bank, LankaQR</span>
+                  </div>
+                  <div className="rounded-2xl bg-[#F8F0EC] p-3">
+                    <span className="block font-black text-[#2C2C2A]">Monday</span>
+                    <span className="text-gray-500">Closed for sanitizing</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </section>
 
           {/* Featured Packages Promo Section */}
@@ -779,7 +1074,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 onClick={() => onNavigate("packages")}
                 className="text-xs font-extrabold text-[#AF2B2D] hover:text-[#AF2B2D] flex items-center gap-1 cursor-pointer"
               >
-                <span>View all 8 packages</span>
+                <span>View all 10 packages</span>
                 <ChevronRight className="h-4 w-4" />
               </button>
             </div>
@@ -789,9 +1084,14 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 <div key={pkg.id} className="bg-white p-6 rounded-2xl border border-rose-100 shadow-md flex flex-col justify-between hover:shadow-lg transition-transform hover:-translate-y-1 duration-300">
                   <div className="space-y-4">
                     <div className="flex justify-between items-start">
-                      <span className="text-[10px] font-bold text-[#AF2B2D] bg-[#F8F0EC] px-2.5 py-1 rounded-full border border-[#AF2B2D]/20">
-                        Popular Selection
-                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        <span className="text-[10px] font-bold text-[#AF2B2D] bg-[#F8F0EC] px-2.5 py-1 rounded-full border border-[#AF2B2D]/20">
+                          Popular Selection
+                        </span>
+                        <span className={`inline-flex shrink-0 items-center justify-center whitespace-nowrap text-[10px] font-bold px-2.5 py-1 rounded-full border ${getAudienceTagClasses(pkg.audience)}`}>
+                          {getAudienceLabel(pkg.audience)}
+                        </span>
+                      </div>
                       <div className="text-right">
                         <span className="block text-[10px] text-gray-400 line-through">LKR {pkg.totalPrice.toLocaleString()}</span>
                         <span className="block text-base font-black text-[#AF2B2D]">LKR {pkg.discountPrice.toLocaleString()}</span>
@@ -819,6 +1119,105 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                   </button>
                 </div>
               ))}
+            </div>
+          </section>
+
+          {/* FAQ */}
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14" id="section-faq">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+              <div className="lg:col-span-4 space-y-4">
+                <span className="text-[10px] text-[#AF2B2D] tracking-[0.22em] font-sans font-extrabold uppercase block">Before You Book</span>
+                <h2 className="text-3xl md:text-4xl font-serif text-[#2C2C2A] font-light leading-tight">FAQ</h2>
+                <p className="text-xs text-gray-500 leading-relaxed max-w-sm">
+                  Quick answers for Sri Lankan customers checking prices, deposits, payment methods, and appointment timing.
+                </p>
+              </div>
+              <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                  ["Do you show prices before booking?", "Yes. Service and package pages show LKR prices, duration, and package discounts before you reserve."],
+                  ["Can I book through WhatsApp?", "Yes. Use the WhatsApp button for quick questions, bridal prep, group bookings, and same-day availability checks."],
+                  ["What payment methods do you accept?", "We accept cash, card, bank transfer, and LankaQR. Some large bridal/package bookings may need a deposit."],
+                  ["Do you take walk-ins?", "Walk-ins are welcome when slots are free, but appointments are better for colouring, facials, rebonding, bridal, and spa packages."],
+                  ["Are men's grooming services available?", "Yes. Haircuts, beard shaping, scalp care, facials, and wellness massage are available for men."],
+                  ["Can I choose my specialist?", "Yes. You can pick Priyanthi, Anusha, Sanduni, Dilshan, or let the team assign the best available specialist."]
+                ].map(([question, answer]) => (
+                  <div key={question} className="bg-white border border-rose-100/70 rounded-2xl p-5 shadow-sm">
+                    <div className="flex items-start gap-3">
+                      <span className="h-9 w-9 rounded-full bg-[#FFF4F5] text-[#AF2B2D] flex items-center justify-center shrink-0">
+                        <HelpCircle className="h-4 w-4" />
+                      </span>
+                      <div>
+                        <h3 className="text-xs font-extrabold text-[#2C2C2A]">{question}</h3>
+                        <p className="text-[11px] text-gray-500 leading-relaxed mt-2">{answer}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Contact */}
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14" id="section-contact">
+            <div className="bg-[#FFF7F8] border border-[#F3C7D4]/70 rounded-[2rem] p-6 sm:p-8 lg:p-10 shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-8">
+              <div className="lg:col-span-5 space-y-5">
+                <span className="text-[10px] text-[#AF2B2D] tracking-[0.22em] font-sans font-extrabold uppercase block">Contact Luminae</span>
+                <h2 className="text-3xl md:text-4xl font-serif text-[#2C2C2A] font-light leading-tight">
+                  Need a quick answer before booking?
+                </h2>
+                <p className="text-xs text-gray-500 leading-relaxed max-w-md">
+                  Send us your preferred date, service, branch, and any hair or skin notes. Our team will confirm the best slot and specialist.
+                </p>
+                <div className="space-y-3">
+                  <a href="https://wa.me/94771234567?text=Hi%20Luminae%20team%2C%20I%20want%20to%20ask%20about%20an%20appointment." target="_blank" rel="noreferrer" className="flex items-center gap-3 rounded-2xl bg-[#1FAF65] px-4 py-3 text-white shadow-sm hover:bg-[#178D52] transition-colors">
+                    <MessageCircle className="h-5 w-5" />
+                    <span className="text-xs font-extrabold uppercase tracking-widest">WhatsApp +94 77 123 4567</span>
+                  </a>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <a href="tel:+94771234567" className="flex items-center gap-3 rounded-2xl bg-white border border-rose-100 px-4 py-3 text-[#2C2C2A] hover:text-[#AF2B2D] transition-colors">
+                      <Phone className="h-4 w-4 text-[#AF2B2D]" />
+                      <span className="text-xs font-bold">Call +94 77 123 4567</span>
+                    </a>
+                    <a href="mailto:appointments@luminae.lk" className="flex items-center gap-3 rounded-2xl bg-white border border-rose-100 px-4 py-3 text-[#2C2C2A] hover:text-[#AF2B2D] transition-colors">
+                      <Mail className="h-4 w-4 text-[#AF2B2D]" />
+                      <span className="text-xs font-bold">appointments@luminae.lk</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <form className="lg:col-span-7 bg-white border border-rose-100/80 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4" onSubmit={(e) => e.preventDefault()}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <label className="space-y-1.5">
+                    <span className="text-[10px] uppercase tracking-widest font-black text-gray-400">Name</span>
+                    <input className="w-full rounded-xl border border-rose-100 bg-[#FFFDFD] px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/20" placeholder="Your name" />
+                  </label>
+                  <label className="space-y-1.5">
+                    <span className="text-[10px] uppercase tracking-widest font-black text-gray-400">Phone</span>
+                    <input className="w-full rounded-xl border border-rose-100 bg-[#FFFDFD] px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/20" placeholder="+94..." />
+                  </label>
+                </div>
+                <label className="space-y-1.5 block">
+                  <span className="text-[10px] uppercase tracking-widest font-black text-gray-400">Service Needed</span>
+                  <select className="w-full rounded-xl border border-rose-100 bg-[#FFFDFD] px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/20">
+                    <option>Hair / Colouring</option>
+                    <option>Skin & Facial</option>
+                    <option>Nails</option>
+                    <option>Bridal / Event Styling</option>
+                    <option>Men's Grooming</option>
+                  </select>
+                </label>
+                <label className="space-y-1.5 block">
+                  <span className="text-[10px] uppercase tracking-widest font-black text-gray-400">Message</span>
+                  <textarea className="min-h-28 w-full rounded-xl border border-rose-100 bg-[#FFFDFD] px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/20" placeholder="Tell us your preferred branch, date, and any special notes." />
+                </label>
+                <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                  <p className="text-[10px] text-gray-400">This demo form is for enquiries. For fastest response, use WhatsApp.</p>
+                  <button onClick={() => onNavigate("book")} className="px-6 py-2.5 bg-[#AF2B2D] hover:bg-[#8F2023] text-white text-[10px] uppercase font-extrabold tracking-widest rounded-full shadow-md transition-colors cursor-pointer">
+                    Book Online
+                  </button>
+                </div>
+              </form>
             </div>
           </section>
 
@@ -883,7 +1282,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
               <span className="text-xs font-extrabold text-[#AF2B2D] uppercase tracking-widest">Complete Menu</span>
               <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Our Professional Services</h1>
               <p className="text-xs text-gray-500 font-sans">
-                Explore our full service selections tailored for ladies and gentlemen. Tap category tags to filter instantly.
+                Explore our full service selection for men, women, teens, couples, families, and event guests. Every card shows whether it is for Men, Women, or Everyone.
               </p>
             </div>
 
@@ -942,9 +1341,14 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                           <span className="h-11 w-11 shrink-0 rounded-2xl bg-[#FFF4F5] text-[#AF2B2D] border border-[#AF2B2D]/10 flex items-center justify-center group-hover:bg-[#AF2B2D] group-hover:text-white transition-colors">
                             <ServiceIcon className="h-5 w-5" />
                           </span>
-                          <span className="text-[9px] uppercase font-bold text-[#AF2B2D] bg-[#F8F0EC] px-2 py-0.5 rounded">
-                            {srv.category}
-                          </span>
+                          <div className="flex flex-wrap gap-1.5">
+                            <span className="shrink-0 whitespace-nowrap text-[9px] uppercase font-bold text-[#AF2B2D] bg-[#F8F0EC] px-2 py-0.5 rounded">
+                              {srv.category}
+                            </span>
+                            <span className={`inline-flex min-w-[5.7rem] shrink-0 items-center justify-center whitespace-nowrap text-[9px] uppercase font-black px-2.5 py-0.5 rounded-full border ${getAudienceTagClasses(srv.audience)}`}>
+                              {getAudienceLabel(srv.audience)}
+                            </span>
+                          </div>
                         </div>
                         <div className="text-right shrink-0">
                           <span className="block text-xs font-black text-[#AF2B2D]">LKR {srv.price.toLocaleString()}</span>
@@ -983,7 +1387,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
             <span className="text-xs font-extrabold tracking-widest text-[#AF2B2D] uppercase">Curated Beauty Collections</span>
             <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Our Ready-to-Use Packages</h1>
             <p className="text-xs text-gray-500 leading-relaxed font-sans">
-              Combine and save! We bundle our top hair, nails, and facials into beautiful packages. Get up to 30% discount compared to booking services individually.
+              Combine and save! We bundle our top hair, grooming, nails, facials, and wellness services for men, women, students, couples, and families.
             </p>
           </div>
 
@@ -1006,7 +1410,12 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 <div className="space-y-4">
                   <div className="space-y-1">
                     <h3 className="text-md font-bold text-gray-900">{pkg.name}</h3>
-                    <p className="text-xs text-gray-400 font-mono">Bundles: {pkg.services.length} Premium Services</p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-xs text-gray-400 font-mono">Bundles: {pkg.services.length} Premium Services</p>
+                      <span className={`inline-flex shrink-0 items-center justify-center whitespace-nowrap text-[9px] uppercase font-bold px-2 py-0.5 rounded-full border ${getAudienceTagClasses(pkg.audience)}`}>
+                        {getAudienceLabel(pkg.audience)}
+                      </span>
+                    </div>
                   </div>
 
                   <p className="text-xs text-gray-500 font-sans leading-relaxed">{pkg.description}</p>
@@ -1127,24 +1536,24 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 <span className="text-[9px] font-black text-[#AF2B2D] bg-[#F8F0EC] px-2 py-0.5 rounded border border-[#AF2B2D]/20">
                   TREND #3 • WEDDING ESSENTIAL
                 </span>
-                <h3 className="text-base font-extrabold text-[#2C2C2A]">Traditional Kandyan Bridal Jewels Pinning Excellence</h3>
+                <h3 className="text-base font-extrabold text-[#2C2C2A]">Traditional Kandyan Bridal & Groom Styling Excellence</h3>
                 <p className="text-xs text-gray-500 leading-relaxed font-sans">
-                  Modern brides expect complete comfort. Luminae provides luxury pre-wedding keratin hair bonding combined with heavy gold jewelry securing and precise draping (which remains solid through multiple photo outings on local humid beaches).
+                  Modern wedding clients expect comfort and polish. Luminae provides pre-event hair care, groom grooming, jewelry securing, saree draping, and photo-ready finishing for humid Sri Lankan celebrations.
                 </p>
                 <div className="pt-1.5 flex items-center gap-4 text-xs font-bold text-[#AF2B2D]">
                   <span>Avg Price: LKR 65,000</span>
                   <span>•</span>
-                  <span>Best for bridal season</span>
+                  <span>Best for wedding season</span>
                 </div>
               </div>
               <div className="md:col-span-4 bg-[#F8F0EC] p-4 rounded-xl text-center border border-gray-100">
                 <span className="text-[10px] text-gray-400 font-bold block uppercase">Recommended Package</span>
-                <span className="block text-xs font-bold text-gray-800 mt-1 font-serif">Bridal Bliss Bundle</span>
+                <span className="block text-xs font-bold text-gray-800 mt-1 font-serif">Bridal & Groom Event Ready</span>
                 <button 
                   onClick={() => triggerQuickBook("pkg5", "package")}
                   className="mt-3.5 w-full py-1 bg-[#AF2B2D] hover:bg-[#8F2023] text-white text-[11px] font-bold rounded-lg"
                 >
-                  Book Bridal Pack
+                  Book Event Pack
                 </button>
               </div>
             </div>
@@ -1198,7 +1607,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 <MapPin className="h-4 w-4 text-[#AF2B2D]" />
                 <span>Visit Us or Request Home Dressing</span>
               </h3>
-              <p className="text-xs text-gray-500 font-sans">Colombo Wijerama Road or Kandy City Center suite. Home bridal service charge +LKR 3,000.</p>
+              <p className="text-xs text-gray-500 font-sans">Colombo Wijerama Road or Kandy City Center suite. Home event styling service charge +LKR 3,000.</p>
             </div>
             <button
               onClick={() => onNavigate("book")}
@@ -1213,11 +1622,11 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
 
       {/* ----------------- SECTION F: DYNAMIC BOOKING FLOW WIZARD ----------------- */}
       {activeSection === "book" && (
-        <div className="max-w-xl mx-auto px-4 py-12" id="section-booking-wizard">
-          <div className="bg-white border border-rose-100 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12" id="section-booking-wizard">
+          <div className="bg-white border border-rose-100 rounded-3xl p-5 sm:p-8 lg:p-10 shadow-xl space-y-7">
             
             {/* Steps Track Header */}
-            <div className="flex justify-between items-center pb-4 border-b border-rose-50">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 pb-4 border-b border-rose-50">
               <span className="text-xs font-black text-[#AF2B2D] uppercase tracking-widest flex items-center gap-1">
                 <Sparkles className="h-4 w-4 text-[#AF2B2D] inline" />
                 <span>Booking Desk</span>
@@ -1234,13 +1643,13 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
             {/* Step 1: Selection */}
             {bookingStep === 1 && (
               <div className="space-y-5 animate-fadeIn">
-                <div className="space-y-2">
+                <div className="space-y-2 max-w-2xl">
                   <h2 className="text-base font-black text-gray-800">What would you like to book?</h2>
                   <p className="text-xs text-gray-500 font-sans">Select individual service or dynamic value combination packages.</p>
                 </div>
 
                 {/* Tab selector */}
-                <div className="grid grid-cols-2 gap-2 bg-[#F8F0EC] p-1 rounded-lg">
+                <div className="grid grid-cols-2 gap-2 bg-[#F8F0EC] p-1 rounded-xl max-w-2xl">
                   <button
                     type="button"
                     onClick={() => setSelectedServiceType("service")}
@@ -1264,58 +1673,128 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 {/* Sublist selection */}
                 {selectedServiceType === "service" ? (
                   <div className="space-y-2">
-                    <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest">Select Beauty Service:</label>
-                    <select
-                      value={chosenServiceId}
-                      onChange={(e) => setChosenServiceId(e.target.value)}
-                      className="w-full bg-[#F8F0EC] border border-rose-100 rounded-lg p-2.5 text-xs font-sans text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/30"
-                    >
-                      <option value="">-- Choose from our 22 services --</option>
-                      {services.map(s => (
-                        <option key={s.id} value={s.id}>{s.name} (LKR {s.price.toLocaleString()})</option>
-                      ))}
-                    </select>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                      <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest">Select one or more services:</label>
+                      <span className="text-[10px] font-bold text-[#AF2B2D] uppercase tracking-widest">{services.length} services available</span>
+                    </div>
+                    <div className="rounded-2xl border border-rose-100 bg-[#F8F0EC] p-2 grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {services.map(s => {
+                        const isSelected = chosenServiceIds.includes(s.id);
+                        return (
+                          <button
+                            key={s.id}
+                            type="button"
+                            onClick={() => toggleChosenService(s.id)}
+                            className={`w-full text-left rounded-xl border p-3 transition-all cursor-pointer ${
+                              isSelected
+                                ? "bg-white border-[#AF2B2D] shadow-sm"
+                                : "bg-white/70 border-transparent hover:border-rose-200"
+                            }`}
+                          >
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="min-w-0 space-y-1">
+                                <div className="flex flex-wrap items-center gap-1.5">
+                                  <span className={`h-4 w-4 rounded border flex items-center justify-center text-[10px] font-black ${
+                                    isSelected ? "bg-[#AF2B2D] border-[#AF2B2D] text-white" : "bg-white border-rose-200 text-transparent"
+                                  }`}>
+                                    ✓
+                                  </span>
+                                  <span className="text-xs font-extrabold text-gray-800 leading-snug">{s.name}</span>
+                                </div>
+                                <div className="flex flex-wrap gap-1.5 pl-5">
+                                  <span className="text-[9px] uppercase font-bold text-[#AF2B2D] bg-[#F8F0EC] px-2 py-0.5 rounded">{s.category}</span>
+                                  <span className={`text-[9px] uppercase font-bold px-2 py-0.5 rounded-full border ${getAudienceTagClasses(s.audience)}`}>
+                                    {getAudienceLabel(s.audience)}
+                                  </span>
+                                  <span className="text-[9px] uppercase font-bold text-gray-400 bg-white px-2 py-0.5 rounded">{s.duration} min</span>
+                                </div>
+                              </div>
+                              <span className="shrink-0 text-xs font-black text-[#AF2B2D]">LKR {s.price.toLocaleString()}</span>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest">Select Combo Package:</label>
-                    <select
-                      value={chosenPackageId}
-                      onChange={(e) => setChosenPackageId(e.target.value)}
-                      className="w-full bg-[#F8F0EC] border border-rose-100 rounded-lg p-2.5 text-xs font-sans text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/30"
-                    >
-                      <option value="">-- Choose from our 8 packages --</option>
-                      {packages.map(p => (
-                        <option key={p.id} value={p.id}>{p.name} (LKR {p.discountPrice.toLocaleString()})</option>
-                      ))}
-                    </select>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                      <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest">Select one bundled package:</label>
+                      <span className="text-[10px] font-bold text-[#AF2B2D] uppercase tracking-widest">{packages.length} packages available</span>
+                    </div>
+                    <div className="rounded-2xl border border-rose-100 bg-[#F8F0EC] p-2 grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {packages.map(p => {
+                        const isSelected = chosenPackageId === p.id;
+                        return (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => setChosenPackageId(p.id)}
+                            className={`w-full text-left rounded-xl border p-4 transition-all cursor-pointer ${
+                              isSelected
+                                ? "bg-white border-[#AF2B2D] shadow-sm"
+                                : "bg-white/70 border-transparent hover:border-rose-200"
+                            }`}
+                          >
+                            <div className="flex items-start justify-between gap-4">
+                              <div className="min-w-0 space-y-2">
+                                <div className="flex flex-wrap items-center gap-1.5">
+                                  <span className={`h-4 w-4 rounded-full border flex items-center justify-center text-[10px] font-black ${
+                                    isSelected ? "bg-[#AF2B2D] border-[#AF2B2D] text-white" : "bg-white border-rose-200 text-transparent"
+                                  }`}>
+                                    ✓
+                                  </span>
+                                  <span className="text-xs font-extrabold text-gray-800 leading-snug">{p.name}</span>
+                                </div>
+                                <p className="text-[11px] text-gray-500 leading-relaxed pl-5">{p.description}</p>
+                                <div className="flex flex-wrap gap-1.5 pl-5">
+                                  <span className={`text-[9px] uppercase font-bold px-2 py-0.5 rounded-full border ${getAudienceTagClasses(p.audience)}`}>
+                                    {getAudienceLabel(p.audience)}
+                                  </span>
+                                  <span className="text-[9px] uppercase font-bold text-gray-400 bg-white px-2 py-0.5 rounded">{p.services.length} services</span>
+                                  {p.isPopular && (
+                                    <span className="text-[9px] uppercase font-bold text-[#AF2B2D] bg-[#F8F0EC] px-2 py-0.5 rounded">popular</span>
+                                  )}
+                                </div>
+                                <div className="pl-5 text-[10px] text-gray-400 leading-relaxed">
+                                  {p.inclusions.slice(0, 3).join(" • ")}
+                                </div>
+                              </div>
+                              <div className="shrink-0 text-right">
+                                <span className="block text-[10px] text-gray-400 line-through">LKR {p.totalPrice.toLocaleString()}</span>
+                                <span className="block text-xs font-black text-[#AF2B2D]">LKR {p.discountPrice.toLocaleString()}</span>
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 )}
 
                 {/* Live pricing display */}
-                {((selectedServiceType === "service" && chosenServiceId) || (selectedServiceType === "package" && chosenPackageId)) && (
+                {((selectedServiceType === "service" && selectedServices.length > 0) || (selectedServiceType === "package" && chosenPackageId)) && (
                   <div className="bg-[#F8F0EC] border border-[#AF2B2D]/10 rounded-2xl p-4 space-y-1.5">
                     <span className="text-[10px] text-gray-400 uppercase font-black tracking-widest">Cost Summary preview:</span>
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-gray-700 font-bold">
-                        {selectedServiceType === "service" 
-                          ? services.find(s => s.id === chosenServiceId)?.name 
-                          : packages.find(p => p.id === chosenPackageId)?.name}
+                    <div className="flex justify-between items-start gap-4">
+                      <span className="text-xs text-gray-700 font-bold leading-relaxed">
+                        {bookingPreviewName}
+                        {selectedServiceType === "service" && (
+                          <span className="block text-[10px] text-gray-400 mt-1">Estimated time: {bookingPreviewDuration} minutes</span>
+                        )}
                       </span>
-                      <span className="text-xs font-black text-[#AF2B2D]">
-                        LKR {selectedServiceType === "service"
-                          ? services.find(s => s.id === chosenServiceId)?.price.toLocaleString()
-                          : packages.find(p => p.id === chosenPackageId)?.discountPrice.toLocaleString()} /-
+                      <span className="shrink-0 text-xs font-black text-[#AF2B2D]">
+                        LKR {bookingPreviewPrice.toLocaleString()} /-
                       </span>
                     </div>
                   </div>
                 )}
 
-                <div className="pt-2">
+                <div className="pt-2 max-w-2xl mx-auto">
                   <button
                     onClick={() => {
-                      if (selectedServiceType === "service" && !chosenServiceId) {
-                        alert("Please select a service first.");
+                      if (selectedServiceType === "service" && selectedServices.length === 0) {
+                        alert("Please select at least one service first.");
                         return;
                       }
                       if (selectedServiceType === "package" && !chosenPackageId) {
@@ -1335,13 +1814,85 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
 
             {/* Step 2: Date, Time & Specialist */}
             {bookingStep === 2 && (
-              <form onSubmit={handleCompleteBooking} className="space-y-4 animate-fadeIn">
-                <div className="space-y-2">
+              <form onSubmit={handleCompleteBooking} className="space-y-6 animate-fadeIn">
+                <div className="space-y-2 max-w-2xl">
                   <h2 className="text-base font-black text-gray-800">Date & Personal Specialist</h2>
-                  <p className="text-xs text-gray-500 font-sans">Pick an open slot. Traditional Kandyan dressings start early.</p>
+                  <p className="text-xs text-gray-500 font-sans">Add your contact details, choose your preference, and pick an open slot.</p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="rounded-2xl border border-rose-100 bg-[#FFFDFD] p-4 sm:p-5 space-y-4">
+                  <span className="block text-[10px] font-black uppercase tracking-widest text-[#AF2B2D]">Customer Details</span>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <label className="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Full Name:</label>
+                    <input
+                      type="text"
+                      value={bookingCustomerName}
+                      onChange={(e) => setBookingCustomerName(e.target.value)}
+                      placeholder={currentUser?.name || "Enter your full name"}
+                      className="w-full bg-[#F8F0EC] border border-rose-100 rounded-lg p-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/30 font-sans block"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Phone / WhatsApp:</label>
+                    <input
+                      type="tel"
+                      value={bookingCustomerPhone}
+                      onChange={(e) => setBookingCustomerPhone(e.target.value)}
+                      placeholder={currentUser?.phone || "+94..."}
+                      className="w-full bg-[#F8F0EC] border border-rose-100 rounded-lg p-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/30 font-sans block"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Email:</label>
+                    <input
+                      type="email"
+                      value={bookingCustomerEmail}
+                      onChange={(e) => setBookingCustomerEmail(e.target.value)}
+                      placeholder={currentUser?.email || "you@example.com"}
+                      className="w-full bg-[#F8F0EC] border border-rose-100 rounded-lg p-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/30 font-sans block"
+                      required
+                    />
+                  </div>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-rose-100 bg-[#FFFDFD] p-4 sm:p-5 space-y-4">
+                  <span className="block text-[10px] font-black uppercase tracking-widest text-[#AF2B2D]">Visit Preference</span>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] font-extrabold text-[#2C2C2A] uppercase tracking-widest">Customer Option:</label>
+                    <select
+                      value={bookingCustomerGender}
+                      onChange={(e) => setBookingCustomerGender(e.target.value as "Male" | "Female" | "Prefer not to say")}
+                      className="w-full bg-[#F8F0EC] border border-rose-100 rounded-lg p-2.5 text-xs font-sans text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/30"
+                      required
+                    >
+                      <option value="Prefer not to say">Prefer not to say</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] font-extrabold text-[#2C2C2A] uppercase tracking-widest">Branch:</label>
+                    <select
+                      value={bookingBranch}
+                      onChange={(e) => setBookingBranch(e.target.value)}
+                      className="w-full bg-[#F8F0EC] border border-rose-100 rounded-lg p-2.5 text-xs font-sans text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/30"
+                    >
+                      {branchLocations.map(branch => (
+                        <option key={branch.name} value={branch.name}>{branch.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-rose-100 bg-[#FFFDFD] p-4 sm:p-5 space-y-4">
+                  <span className="block text-[10px] font-black uppercase tracking-widest text-[#AF2B2D]">Schedule & Specialist</span>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Date:</label>
                     <input
@@ -1367,7 +1918,6 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                       <option value="18:00">06:00 PM</option>
                     </select>
                   </div>
-                </div>
 
                 <div className="space-y-1.5">
                   <label className="block text-[10px] font-extrabold text-[#2C2C2A] uppercase tracking-widest">Preferred Beautician:</label>
@@ -1384,6 +1934,23 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 </div>
 
                 <div className="space-y-1.5">
+                  <label className="block text-[10px] font-extrabold text-[#2C2C2A] uppercase tracking-widest">Payment Preference:</label>
+                  <select
+                    value={bookingPaymentMethod}
+                    onChange={(e) => setBookingPaymentMethod(e.target.value)}
+                    className="w-full bg-[#F8F0EC] border border-rose-100 rounded-lg p-2.5 text-xs font-sans text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/30"
+                  >
+                    <option value="Pay at salon">Pay at salon</option>
+                    <option value="LankaQR">LankaQR</option>
+                    <option value="Card">Card</option>
+                    <option value="Bank transfer">Bank transfer</option>
+                    <option value="Cash">Cash</option>
+                  </select>
+                </div>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-rose-100 bg-[#FFFDFD] p-4 sm:p-5 space-y-3">
                   <label className="block text-[10px] font-extrabold text-gray-400 tracking-widest uppercase">Special Notes / Allergies / Hair specifications:</label>
                   <textarea
                     value={bookingNotes}
@@ -1395,17 +1962,17 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                   <span className="block text-[10px] text-gray-400 font-sans leading-none mt-0.5">Note values are added carefully to specialists tablets under the Smart CRM standard.</span>
                 </div>
 
-                <div className="flex gap-2.5 pt-2">
+                <div className="flex flex-col sm:flex-row gap-2.5 pt-2 max-w-2xl mx-auto">
                   <button
                     type="button"
                     onClick={() => setBookingStep(1)}
-                    className="py-2 px-4 bg-[#F8F0EC] text-gray-500 font-bold text-xs rounded-lg border border-gray-200"
+                    className="py-2.5 px-5 bg-[#F8F0EC] text-gray-500 font-bold text-xs rounded-lg border border-gray-200"
                   >
                     Back
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 py-2 bg-[#AF2B2D] hover:bg-[#8F2023] text-white text-xs font-bold rounded-lg transition-transform hover:scale-[1.01] shadow"
+                    className="flex-1 py-2.5 bg-[#AF2B2D] hover:bg-[#8F2023] text-white text-xs font-bold rounded-lg transition-transform hover:scale-[1.01] shadow"
                   >
                     Confirm Booking Details
                   </button>
@@ -1448,7 +2015,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
 
                   <div className="space-y-1">
                     <span className="block text-[10px] text-gray-400 font-extrabold tracking-widest">MERCHANT: LUMINAE PARLOUR Colombo</span>
-                    <span className="block text-xs font-bold text-gray-700">Amount: LKR {selectedServiceType === "service" ? services.find(s=>s.id===chosenServiceId)?.price.toLocaleString() : packages.find(p=>p.id===chosenPackageId)?.discountPrice.toLocaleString()} /=</span>
+                    <span className="block text-xs font-bold text-gray-700">Amount: LKR {bookingPreviewPrice.toLocaleString()} /=</span>
                   </div>
                 </div>
 
