@@ -101,7 +101,7 @@ export default function LoginRegister({ initialMode, onSuccess, onNavigate }: Lo
                mode === "register" ? "Become a Luminae Member" : "Reset Portal Password"}
             </h2>
             <p className="text-xs text-gray-400 font-sans leading-relaxed">
-              {mode === "login" ? "Sign in to manage slots, check loyalty points, and update schedules." :
+              {mode === "login" ? "Sign in to manage appointments, check loyalty points, and view your beauty history." :
                mode === "register" ? "Join our loyalty rewards program and lock in Kandyan bridal slots." :
                "Type your email line to retrieve password reset links."}
             </p>
@@ -134,7 +134,7 @@ export default function LoginRegister({ initialMode, onSuccess, onNavigate }: Lo
             </div>
 
             <div className="space-y-1">
-              <label className="block text-[11px] font-extrabold text-gray-450 uppercase tracking-wider">Authentication Persona Role:</label>
+              <label className="block text-[11px] font-extrabold text-gray-450 uppercase tracking-wider">Account Type:</label>
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value as UserRole)}
@@ -146,10 +146,10 @@ export default function LoginRegister({ initialMode, onSuccess, onNavigate }: Lo
               </select>
             </div>
 
-            {/* Quick-simulate assistant panel */}
+            {/* Quick account helper */}
             <div className="p-3.5 bg-rose-50/30 border border-rose-100 rounded-2xl space-y-2">
-              <span className="block text-[9px] font-black text-[#D4537E] uppercase tracking-widest leading-none">Prototyping Assistant helpers:</span>
-              <p className="text-[10px] text-gray-400 font-sans leading-none">Instant single-click credential filler:</p>
+              <span className="block text-[9px] font-black text-[#D4537E] uppercase tracking-widest leading-none">Quick Login</span>
+              <p className="text-[10px] text-gray-400 font-sans leading-none">Use a saved sample account to preview the portal:</p>
               <div className="flex flex-wrap gap-1.5 pt-1">
                 <button
                   type="button"

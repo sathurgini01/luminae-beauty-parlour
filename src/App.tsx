@@ -5,7 +5,7 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AppProviderObj, useAppState } from "./context/AppContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -15,18 +15,68 @@ import AdminPortal from "./components/AdminPortal";
 import WorkerPortal from "./components/WorkerPortal";
 import LoginRegister from "./components/LoginRegister";
 
-function MainAppLayout() {
+const viewToPath: Record<string, string> = {
+  landing: "/",
+  services: "/services",
+  packages: "/packages",
+  trends: "/gallery",
+  story: "/about",
+  book: "/booking",
+  login: "/login",
+  register: "/register",
+  forgot: "/forgot-password",
+  "customer-dashboard": "/customer/bookings",
+  "admin-dashboard": "/admin",
+  "worker-dashboard": "/specialist"
+};
+
+const pathToView = (pathname: string) => {
+  const cleanPath = pathname.replace(/\/+$/, "") || "/";
+  if (cleanPath === "/") return "landing";
+  if (cleanPath === "/services") return "services";
+  if (cleanPath === "/packages") return "packages";
+  if (cleanPath === "/gallery" || cleanPath === "/trends") return "trends";
+  if (cleanPath === "/about" || cleanPath === "/story") return "story";
+  if (cleanPath === "/booking" || cleanPath === "/book") return "book";
+  if (cleanPath === "/login") return "login";
+  if (cleanPath === "/register") return "register";
+  if (cleanPath === "/forgot-password" || cleanPath === "/forgot") return "forgot";
+  if (cleanPath === "/customer" || cleanPath === "/customer/bookings") return "customer-dashboard";
+  if (cleanPath === "/admin") return "admin-dashboard";
+  if (cleanPath === "/specialist" || cleanPath === "/worker") return "worker-dashboard";
+  return "landing";
+};
+
+function MainAppLayout({ initialView }: { initialView: string }) {
   const { currentRole } = useAppState();
-  const [activeView, setActiveView] = useState("landing");
+  const [activeView, setActiveView] = useState(initialView);
+
+  const handleNavigate = (view: string) => {
+    setActiveView(view);
+    if (typeof window === "undefined") return;
+    const nextPath = viewToPath[view] || "/";
+    if (window.location.pathname !== nextPath) {
+      window.history.pushState({ view }, "", nextPath);
+    }
+  };
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setActiveView(pathToView(window.location.pathname));
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   // Handle successful logins redirects
   const handleAuthSuccess = (role: string) => {
     if (role === "admin") {
-      setActiveView("admin-dashboard");
+      handleNavigate("admin-dashboard");
     } else if (role === "worker") {
-      setActiveView("worker-dashboard");
+      handleNavigate("worker-dashboard");
     } else {
-      setActiveView("customer-dashboard");
+      handleNavigate("customer-dashboard");
     }
   };
 
@@ -34,7 +84,7 @@ function MainAppLayout() {
     <div className="flex flex-col min-h-screen bg-[#F8F0EC] text-[#2C2C2A] font-sans selection:bg-[#AF2B2D]/25 overflow-x-hidden">
       
       {/* Navigation Header */}
-      <Navbar onNavigate={setActiveView} activeView={activeView} />
+      <Navbar onNavigate={handleNavigate} activeView={activeView} />
 
       {/* Main Multi-route Body Assembler */}
       <main className="flex-grow">
@@ -47,7 +97,7 @@ function MainAppLayout() {
           activeView === "story" || 
           activeView === "book" || 
           activeView === "customer-dashboard") && (
-          <CustomerPortal activeSection={activeView} onNavigate={setActiveView} />
+          <CustomerPortal activeSection={activeView} onNavigate={handleNavigate} />
         )}
 
         {/* VIEW 2: Secure Administrative panel */}
@@ -60,9 +110,9 @@ function MainAppLayout() {
                 <div className="text-[#AF2B2D] font-bold bg-[#F8F0EC] p-4 rounded-2xl border border-rose-100">
                   ⚠️ Administrative Authorization Restricted
                 </div>
-                <p className="text-xs text-gray-400">Please switch your Active role to "Admin (Owner)" in the top simulation controller to gain authorized access.</p>
+                <p className="text-xs text-gray-400">Please sign in with the owner account to access the admin workspace.</p>
                 <button 
-                  onClick={() => setActiveView("login")}
+                  onClick={() => handleNavigate("login")}
                   className="px-4 py-1.5 bg-[#AF2B2D] text-white text-xs font-bold rounded-lg"
                 >
                   Go to login
@@ -82,9 +132,9 @@ function MainAppLayout() {
                 <div className="text-[#AF2B2D] font-bold bg-[#F8F0EC] p-4 rounded-2xl border border-rose-100">
                   ⚠️ Therapist Authorization Restricted
                 </div>
-                <p className="text-xs text-gray-400">Please switch your Active role to "Worker (Anusha)" in the top simulation controller to unlock scheduling features.</p>
+                <p className="text-xs text-gray-400">Please sign in with a specialist account to access scheduling features.</p>
                 <button 
-                  onClick={() => setActiveView("login")}
+                  onClick={() => handleNavigate("login")}
                   className="px-4 py-1.5 bg-[#AF2B2D] text-white text-xs font-bold rounded-lg"
                 >
                   Go to login
@@ -99,26 +149,28 @@ function MainAppLayout() {
           <LoginRegister 
             initialMode={activeView as "login" | "register" | "forgot"}
             onSuccess={handleAuthSuccess} 
-            onNavigate={setActiveView} 
+            onNavigate={handleNavigate} 
           />
         )}
 
       </main>
 
-      {/* Floating simulated green WhatsApp CRM overlay */}
+      {/* Floating WhatsApp enquiry widget */}
       <WhatsAppButton />
 
-      {/* Corporate compliant footer bar with directions */}
-      <Footer onNavigate={setActiveView} />
+      {/* Footer with contact details and directions */}
+      <Footer onNavigate={handleNavigate} />
 
     </div>
   );
 }
 
-export default function App() {
+export default function App({ initialView = "landing" }: { initialView?: string }) {
   return (
     <AppProviderObj>
-      <MainAppLayout />
+      <MainAppLayout initialView={initialView} />
     </AppProviderObj>
   );
 }
+
+export { pathToView };

@@ -119,12 +119,12 @@ export default function WhatsAppButton() {
                 <div>
                   <h5 className="text-xs font-bold text-gray-800">Message Dispatched Successfully!</h5>
                   <p className="text-[11px] text-gray-500 mt-1 px-4 leading-relaxed">
-                    This simulated enquiry has been catalogued in our local CRM logs. Anusha Perera will review this booking and text you shortly.
+                    Your enquiry has been received. A Luminae specialist will review your request and text you shortly.
                   </p>
                 </div>
                 <div className="bg-emerald-50 text-[10px] text-emerald-800 p-2 rounded border border-emerald-100 inline-flex items-center gap-1.5 font-medium">
                   <Bell className="h-3 w-3 animate-bounce" />
-                  <span>Check Admin/Worker portal for updates</span>
+                  <span>Our team will follow up soon</span>
                 </div>
               </div>
             ) : (
@@ -173,7 +173,7 @@ export default function WhatsAppButton() {
                     className="w-full py-2 bg-[#1D9E75] hover:bg-[#15825f] text-white text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 shadow hover:shadow-lg transition-all cursor-pointer"
                   >
                     <Send className="h-3.5 w-3.5" />
-                    <span>Send Simulated WhatsApp</span>
+                    <span>Send WhatsApp Enquiry</span>
                   </button>
                 </form>
               </>

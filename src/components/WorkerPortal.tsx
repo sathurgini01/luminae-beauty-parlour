@@ -97,7 +97,7 @@ export default function WorkerPortal() {
           </div>
           <h1 className="text-2xl font-black text-gray-900 tracking-tight">Active Therapist: {currentWorker?.name}</h1>
           <p className="text-xs text-gray-500 font-sans max-w-lg leading-relaxed">
-            Manage your daily appointments schedule, update seat status live, and review skin specification notes written by other therapists.
+            Manage your daily appointments schedule, update treatment status live, and review client care notes written by other therapists.
           </p>
         </div>
 
@@ -300,7 +300,7 @@ export default function WorkerPortal() {
                 <textarea
                   value={newNoteText}
                   onChange={(e) => setNewNoteText(e.target.value)}
-                  placeholder="E.g. sandwood paste allergy discoverey, requests Neeladi scalp oil rub..."
+                  placeholder="E.g. sandalwood paste allergy, requests Neeladi scalp oil massage..."
                   rows={4}
                   className="w-full p-2.5 bg-[#FAF8F6] border border-rose-100 text-xs font-sans rounded focus:outline-none focus:ring-1 focus:ring-pink-300 resize-none resize-none"
                   required

@@ -9,19 +9,20 @@ import {
   Sparkles, Gift, Clock, Calendar, CheckCircle, Search, Scissors, 
   MapPin, Phone, HelpCircle, Star, Palette, Award, Trash2, ChevronRight, 
   ArrowRight, ShieldCheck, Heart, User, Sparkle, AlertCircle, ShoppingBag, 
-  History, Eye
+  History, Eye, Droplets, Flower2, Gem, HandHeart, Leaf, Waves, Crown, Paintbrush
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { Service, Package, Appointment } from "../types";
 import { COMPARISON_ERAS } from "../lib/mockData";
 
 // @ts-ignore
 import beautyHeroModelData from "../assets/images/home-beauty-hero-flower.png";
 // @ts-ignore
-import haircutImgData from "../assets/images/style_haircut_1781258153827.jpg";
+import haircutImgData from "../assets/images/style_haircut_cutting.png";
 // @ts-ignore
-import hairstyleImgData from "../assets/images/style_hairstyle_1781258171871.jpg";
+import skinFacialImgData from "../assets/images/style_skin_facial_men.png";
 // @ts-ignore
-import coloringImgData from "../assets/images/style_coloring_1781258188775.jpg";
+import nailsImgData from "../assets/images/style_nails_polish.png";
 // @ts-ignore
 import teamOliviaData from "../assets/images/team_olivia_1781258208138.jpg";
 // @ts-ignore
@@ -31,8 +32,8 @@ import teamEmilyData from "../assets/images/team_emily_1781258242234.jpg";
 
 const beautyHeroModel = beautyHeroModelData.src;
 const haircutImg = haircutImgData.src;
-const hairstyleImg = hairstyleImgData.src;
-const coloringImg = coloringImgData.src;
+const skinFacialImg = skinFacialImgData.src;
+const nailsImg = nailsImgData.src;
 const teamOlivia = teamOliviaData.src;
 const teamAmelia = teamAmeliaData.src;
 const teamEmily = teamEmilyData.src;
@@ -41,6 +42,70 @@ interface CustomerPortalProps {
   activeSection: string;
   onNavigate: (section: string) => void;
 }
+
+const categoryIconMap: Record<string, LucideIcon> = {
+  All: Sparkles,
+  Hair: Scissors,
+  "Skin & Facial": Flower2,
+  Nails: Gem,
+  "Body & Waxing": HandHeart,
+  "Bridal & Special Occasion": Crown,
+  "Relaxation & Wellness": Waves
+};
+
+const serviceIconMap: Record<string, LucideIcon> = {
+  h1: Scissors,
+  h2: Droplets,
+  h3: Palette,
+  h4: ShieldCheck,
+  h5: Waves,
+  h6: Leaf,
+  h7: User,
+  s1: Flower2,
+  s2: Leaf,
+  s3: Sparkles,
+  s4: Sparkle,
+  s5: Paintbrush,
+  n1: Gem,
+  n2: Sparkles,
+  n3: Palette,
+  n4: HandHeart,
+  w1: HandHeart,
+  w2: ShieldCheck,
+  w3: Droplets,
+  b1: Crown,
+  b2: Heart,
+  b3: Award,
+  v1: Waves,
+  v2: Leaf
+};
+
+const branchLocations = [
+  {
+    order: "01",
+    name: "Colombo 07 Flagship",
+    label: "Main Branch",
+    address: "45, Wijerama Mawatha, Colombo 07",
+    hours: "Tue - Fri: 9.00 AM - 7.00 PM",
+    weekendHours: "Sat - Sun: 8.30 AM - 8.00 PM",
+    phone: "+94 77 123 4567",
+    note: "Best for bridal consultations, hair styling, facials, and full treatment packages."
+  },
+  {
+    order: "02",
+    name: "Kandy Luxury Suite",
+    label: "Second Branch",
+    address: "Level 2, Kandy City Centre, Kandy",
+    hours: "Tue - Fri: 9.30 AM - 6.30 PM",
+    weekendHours: "Sat - Sun: 8.30 AM - 7.30 PM",
+    phone: "+94 11 234 5678",
+    note: "Ideal for bridal dressing, gel nails, threading, and express beauty appointments."
+  }
+];
+
+const getServiceIcon = (service: Service) => {
+  return serviceIconMap[service.id] || categoryIconMap[service.category] || Sparkles;
+};
 
 export default function CustomerPortal({ activeSection, onNavigate }: CustomerPortalProps) {
   const { 
@@ -321,26 +386,26 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                   </div>
                 </div>
 
-                {/* Hairstyles Card */}
+                {/* Skin & Facial Card */}
                 <div 
                   onClick={() => {
-                    setSelectedCategory("Hair");
+                    setSelectedCategory("Skin & Facial");
                     setSearchTerm("");
                     onNavigate("services");
                   }}
                   className="group relative rounded-[2rem] overflow-hidden aspect-[3/4] cursor-pointer shadow-md shadow-black/5 hover:-translate-y-2 transition-all duration-500 border border-neutral-100"
                 >
-                  <img src={hairstyleImg} alt="Hairstyles" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" referrerPolicy="no-referrer" />
+                  <img src={skinFacialImg} alt="Man receiving a professional facial treatment" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" referrerPolicy="no-referrer" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                   <div className="absolute top-4 left-4">
                     <span className="px-4 py-1.5 bg-white/90 backdrop-blur-sm text-[#2C2C2A] text-[10px] uppercase font-bold tracking-widest rounded-full shadow">
-                      Hairstyles
+                      Skin & Facial
                     </span>
                   </div>
                   <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-white">
                     <div>
-                      <h4 className="text-sm font-serif font-bold text-white">Curated Styling</h4>
-                      <p className="text-[9px] text-[#F8F0EC]/75 uppercase tracking-wider font-semibold font-sans">Waves, curls & blowout</p>
+                      <h4 className="text-sm font-serif font-bold text-white">Glow Renewal</h4>
+                      <p className="text-[9px] text-[#F8F0EC]/75 uppercase tracking-wider font-semibold font-sans">Facials, cleanse & care</p>
                     </div>
                     <span className="h-8 w-8 rounded-full bg-white text-[#AF2B2D] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       →
@@ -348,26 +413,26 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                   </div>
                 </div>
 
-                {/* Coloring Card */}
+                {/* Nails Card */}
                 <div 
                   onClick={() => {
-                    setSelectedCategory("Hair");
-                    setSearchTerm("Colouring");
+                    setSelectedCategory("Nails");
+                    setSearchTerm("");
                     onNavigate("services");
                   }}
                   className="group relative rounded-[2rem] overflow-hidden aspect-[3/4] cursor-pointer shadow-md shadow-black/5 hover:-translate-y-2 transition-all duration-500 border border-neutral-100"
                 >
-                  <img src={coloringImg} alt="Coloring" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" referrerPolicy="no-referrer" />
+                  <img src={nailsImg} alt="Professional polished nails manicure" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" referrerPolicy="no-referrer" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                   <div className="absolute top-4 left-4">
                     <span className="px-4 py-1.5 bg-white/90 backdrop-blur-sm text-[#2C2C2A] text-[10px] uppercase font-bold tracking-widest rounded-full shadow">
-                      Coloring
+                      Nails
                     </span>
                   </div>
                   <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-white">
                     <div>
-                      <h4 className="text-sm font-serif font-bold text-white">Artistic Balayage</h4>
-                      <p className="text-[9px] text-[#F8F0EC]/75 uppercase tracking-wider font-semibold font-sans">Full dye, pastel & roots</p>
+                      <h4 className="text-sm font-serif font-bold text-white">Polished Finish</h4>
+                      <p className="text-[9px] text-[#F8F0EC]/75 uppercase tracking-wider font-semibold font-sans">Gel, art & manicure</p>
                     </div>
                     <span className="h-8 w-8 rounded-full bg-white text-[#AF2B2D] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       →
@@ -379,74 +444,75 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
             </div>
           </section>
 
-          {/* Why Choose Us section (Image 2 terracotta stat grid) */}
+          {/* Why Choose Us section */}
           <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="bg-[#AF2B2D] p-8 sm:p-12 lg:p-16 text-[#F8F0EC] grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start relative shadow-xl overflow-hidden">
-              <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-white/5 blur-3xl pointer-events-none" />
+            <div className="bg-[#FFF7F8] p-8 sm:p-12 lg:p-16 text-[#2C2C2A] grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start relative shadow-sm overflow-hidden border border-[#F3C7D4]/50 rounded-[1.75rem]">
+              <div className="absolute top-0 right-0 h-48 w-48 bg-[#F8B8BE]/18 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute bottom-0 left-0 h-40 w-40 bg-white/90 rounded-full blur-3xl pointer-events-none" />
               
               {/* Left stats column: col-span-4 */}
-              <div className="lg:col-span-4 space-y-6">
-                <span className="text-[10px] text-white/50 tracking-[0.25em] font-sans font-bold uppercase block">LUMINAE CEYLON</span>
-                <h2 className="text-3xl sm:text-4xl font-serif font-light text-white leading-tight">Why Choose Us</h2>
-                <p className="text-xs text-white/60 leading-relaxed font-sans pr-4 pt-1">
-                  Discover Ceylon's finest hair mechanics and organic skincare therapies custom tailored for your specific grace. Combining NVQ gold standards with MOH hygienic luxury.
+              <div className="relative lg:col-span-4 space-y-6">
+                <span className="text-[10px] text-[#D95F8D] tracking-[0.25em] font-sans font-bold uppercase block">LUMINAE CEYLON</span>
+                <h2 className="text-3xl sm:text-4xl font-serif font-light text-[#2C2C2A] leading-tight">Why Choose Us</h2>
+                <p className="text-xs text-[#2C2C2A]/60 leading-relaxed font-sans pr-4 pt-1">
+                  Discover premium styling, organic skin therapies, and personal consultations tailored to your natural beauty. Every treatment is delivered with trained artistry and hygienic care.
                 </p>
                 
-                <div className="pt-6 border-t border-white/10 flex items-center gap-10">
+                <div className="pt-6 border-t border-[#F3C7D4]/80 flex items-center gap-10">
                   <div>
-                    <span className="block text-4xl font-serif font-light text-white">30k</span>
-                    <span className="text-[9px] uppercase font-bold tracking-widest text-[#F8F0EC]/55 block mt-1">Satisfied Clients</span>
+                    <span className="block text-4xl font-serif font-light text-[#D95F8D]">30k</span>
+                    <span className="text-[9px] uppercase font-bold tracking-widest text-[#2C2C2A]/45 block mt-1">Satisfied Clients</span>
                   </div>
-                  <div className="w-px h-10 bg-white/10" />
+                  <div className="w-px h-10 bg-[#F3C7D4]" />
                   <div>
-                    <span className="block text-4xl font-serif font-light text-white">15</span>
-                    <span className="text-[9px] uppercase font-bold tracking-widest text-[#F8F0EC]/55 block mt-1">Salons Around Sri Lanka</span>
+                    <span className="block text-4xl font-serif font-light text-[#D95F8D]">15</span>
+                    <span className="text-[9px] uppercase font-bold tracking-widest text-[#2C2C2A]/45 block mt-1">Salons Around Sri Lanka</span>
                   </div>
                 </div>
               </div>
 
               {/* Right grid column: col-span-8 */}
-              <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
+              <div className="relative lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
                 {/* Card 1 */}
-                <div className="bg-white/10 border border-white/10 hover:bg-white/15 rounded-xl p-6 transition-colors space-y-3">
-                  <div className="h-8 w-8 text-white">
+                <div className="bg-white border border-[#F3C7D4]/60 hover:border-[#D95F8D]/45 rounded-xl p-6 transition-colors space-y-3 shadow-sm">
+                  <div className="h-9 w-9 rounded-full bg-[#FFF4F5] text-[#D95F8D] flex items-center justify-center">
                     <Award className="h-6 w-6 stroke-[1.25]" />
                   </div>
-                  <h3 className="text-sm font-serif font-medium text-white">Supreme Artistry</h3>
-                  <p className="text-xs text-white/55 leading-relaxed font-sans">
+                  <h3 className="text-sm font-serif font-medium text-[#2C2C2A]">Supreme Artistry</h3>
+                  <p className="text-xs text-[#2C2C2A]/55 leading-relaxed font-sans">
                     Our team of highly skilled and experienced stylists is dedicated to staying on the cutting edge of industry trends. Trust us to transform your vision into a stunning reality.
                   </p>
                 </div>
 
                 {/* Card 2 */}
-                <div className="bg-white/10 border border-white/10 hover:bg-white/15 rounded-xl p-6 transition-colors space-y-3">
-                  <div className="h-8 w-8 text-white">
+                <div className="bg-white border border-[#F3C7D4]/60 hover:border-[#D95F8D]/45 rounded-xl p-6 transition-colors space-y-3 shadow-sm">
+                  <div className="h-9 w-9 rounded-full bg-[#FFF4F5] text-[#D95F8D] flex items-center justify-center">
                     <User className="h-6 w-6 stroke-[1.25]" />
                   </div>
-                  <h3 className="text-sm font-serif font-medium text-white">Bespoke Consultations</h3>
-                  <p className="text-xs text-white/55 leading-relaxed font-sans">
+                  <h3 className="text-sm font-serif font-medium text-[#2C2C2A]">Bespoke Consultations</h3>
+                  <p className="text-xs text-[#2C2C2A]/55 leading-relaxed font-sans">
                     Your unique style is our priority. Enjoy personalized consultations with our stylists, ensuring a treatment plan that complements your features, lifestyle, and fashion.
                   </p>
                 </div>
 
                 {/* Card 3 */}
-                <div className="bg-white/10 border border-white/10 hover:bg-white/15 rounded-xl p-6 transition-colors space-y-3">
-                  <div className="h-8 w-8 text-white">
+                <div className="bg-white border border-[#F3C7D4]/60 hover:border-[#D95F8D]/45 rounded-xl p-6 transition-colors space-y-3 shadow-sm">
+                  <div className="h-9 w-9 rounded-full bg-[#FFF4F5] text-[#D95F8D] flex items-center justify-center">
                     <Sparkles className="h-6 w-6 stroke-[1.25]" />
                   </div>
-                  <h3 className="text-sm font-serif font-medium text-white">Setting Trends</h3>
-                  <p className="text-xs text-white/55 leading-relaxed font-sans">
+                  <h3 className="text-sm font-serif font-medium text-[#2C2C2A]">Setting Trends</h3>
+                  <p className="text-xs text-[#2C2C2A]/55 leading-relaxed font-sans">
                     We're not just following trends; we're setting them. Step into the latest fashion with our trendsetting styles that keep you ahead of the local curve.
                   </p>
                 </div>
 
                 {/* Card 4 */}
-                <div className="bg-white/10 border border-white/10 hover:bg-white/15 rounded-xl p-6 transition-colors space-y-3">
-                  <div className="h-8 w-8 text-white">
+                <div className="bg-white border border-[#F3C7D4]/60 hover:border-[#D95F8D]/45 rounded-xl p-6 transition-colors space-y-3 shadow-sm">
+                  <div className="h-9 w-9 rounded-full bg-[#FFF4F5] text-[#D95F8D] flex items-center justify-center">
                     <ShieldCheck className="h-6 w-6 stroke-[1.25]" />
                   </div>
-                  <h3 className="text-sm font-serif font-medium text-white">Pure & Organic Care</h3>
-                  <p className="text-xs text-white/55 leading-relaxed font-sans">
+                  <h3 className="text-sm font-serif font-medium text-[#2C2C2A]">Pure & Organic Care</h3>
+                  <p className="text-xs text-[#2C2C2A]/55 leading-relaxed font-sans">
                     We believe in using only the best. Our premium hair care and styling products ensure not only a flawless finish but also the long-term health of your tropical hair.
                   </p>
                 </div>
@@ -536,7 +602,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
               <span className="text-xs font-extrabold tracking-widest text-[#AF2B2D] uppercase">Sri Lankan Beauty Innovation</span>
               <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">The Evolution of Lankan Parlours</h2>
               <p className="text-xs text-gray-500 leading-relaxed font-sans">
-                Explore the historic evolution of Ceylon parlours. From traditional walk-in backyard henna to today's checkout LankaQR systems and automated WhatsApp reminders.
+                Explore how Sri Lankan beauty care has moved from simple walk-in treatments to modern online bookings, digital payments, and personal client care notes.
               </p>
             </div>
 
@@ -593,7 +659,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
 
                     {isCurrent && (
                       <div className="pt-4 mt-4 border-t border-emerald-100 text-center">
-                        <span className="text-[10px] font-black text-[#AF2B2D] block uppercase tracking-widest">Implemented & Active!</span>
+                        <span className="text-[10px] font-black text-[#AF2B2D] block uppercase tracking-widest">Now Available at Luminae</span>
                       </div>
                     )}
                   </div>
@@ -609,7 +675,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 <div className="space-y-2">
                   <h3 className="text-xl font-bold tracking-tight text-[#2C2C2A] font-serif font-light">MOH Sanitary Compliance</h3>
                   <p className="text-xs text-gray-500 font-sans leading-relaxed">
-                    Our stations strictly meet the physical guidelines of the Colombo Medical Officer of Health (MOH) and Local Municipal Authorities.
+                    Our stations follow clean, organized salon practices with dedicated styling, wash, nail, and spa areas for a comfortable guest experience.
                   </p>
                 </div>
                 <div className="md:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -630,6 +696,74 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                     <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">MOH Permitted</span>
                   </div>
                 </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Branch Locations */}
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14" id="section-locations">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+              <div className="lg:col-span-4 space-y-4">
+                <span className="text-[10px] text-[#AF2B2D] tracking-[0.22em] font-sans font-extrabold uppercase block">Visit Luminae</span>
+                <h2 className="text-3xl md:text-4xl font-serif text-[#2C2C2A] font-light leading-tight">
+                  Our Parlour Locations
+                </h2>
+                <p className="text-xs text-gray-500 leading-relaxed font-sans max-w-sm">
+                  Choose the nearest Luminae branch for your appointment. Colombo 07 is our main flagship, followed by the Kandy luxury suite.
+                </p>
+                <button
+                  onClick={() => onNavigate("book")}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#AF2B2D] hover:bg-[#8F2023] text-white text-[10px] uppercase font-extrabold tracking-widest rounded-full shadow-md transition-colors cursor-pointer"
+                >
+                  <Calendar className="h-3.5 w-3.5" />
+                  <span>Book a Visit</span>
+                </button>
+              </div>
+
+              <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-5">
+                {branchLocations.map((branch) => (
+                  <div key={branch.name} className="bg-white border border-rose-100/70 rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <span className="h-11 w-11 rounded-2xl bg-[#FFF4F5] border border-[#AF2B2D]/10 text-[#AF2B2D] flex items-center justify-center font-serif text-lg">
+                          {branch.order}
+                        </span>
+                        <div>
+                          <span className="block text-[9px] font-extrabold uppercase tracking-widest text-[#AF2B2D]">{branch.label}</span>
+                          <h3 className="text-base font-serif font-medium text-[#2C2C2A] mt-1">{branch.name}</h3>
+                        </div>
+                      </div>
+                      <span className="hidden sm:inline-flex h-8 w-8 rounded-full bg-[#F8F0EC] text-[#AF2B2D] items-center justify-center">
+                        <MapPin className="h-4 w-4" />
+                      </span>
+                    </div>
+
+                    <div className="mt-5 space-y-3 text-xs text-gray-600 font-sans">
+                      <div className="flex items-start gap-2.5">
+                        <MapPin className="h-4 w-4 text-[#AF2B2D] shrink-0 mt-0.5" />
+                        <span className="leading-relaxed">{branch.address}</span>
+                      </div>
+                      <div className="flex items-start gap-2.5">
+                        <Clock className="h-4 w-4 text-[#AF2B2D] shrink-0 mt-0.5" />
+                        <span className="leading-relaxed">
+                          {branch.hours}<br />
+                          {branch.weekendHours}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2.5">
+                        <Phone className="h-4 w-4 text-[#AF2B2D] shrink-0" />
+                        <a href={`tel:${branch.phone.replace(/\s/g, "")}`} className="font-bold text-[#2C2C2A] hover:text-[#AF2B2D] transition-colors">
+                          {branch.phone}
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 pt-4 border-t border-rose-100/70 flex items-start gap-2">
+                      <CheckCircle className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
+                      <p className="text-[11px] text-gray-500 leading-relaxed">{branch.note}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </section>
@@ -768,19 +902,23 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
 
           {/* Category Slider */}
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`text-xs font-bold px-4 py-2 rounded-full whitespace-nowrap transition-all border cursor-pointer ${
-                  selectedCategory === cat
-                    ? "bg-[#AF2B2D] text-white border-transparent shadow"
-                    : "bg-white text-gray-700 border-gray-200 hover:border-[#AF2B2D]/40"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+            {categories.map((cat) => {
+              const CategoryIcon = categoryIconMap[cat] || Sparkles;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`text-xs font-bold px-4 py-2 rounded-full whitespace-nowrap transition-all border cursor-pointer inline-flex items-center gap-2 ${
+                    selectedCategory === cat
+                      ? "bg-[#AF2B2D] text-white border-transparent shadow"
+                      : "bg-white text-gray-700 border-gray-200 hover:border-[#AF2B2D]/40 hover:text-[#AF2B2D]"
+                  }`}
+                >
+                  <CategoryIcon className="h-3.5 w-3.5" />
+                  <span>{cat}</span>
+                </button>
+              );
+            })}
           </div>
 
           {/* Services Grid */}
@@ -794,37 +932,45 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {filteredServices.map((srv) => (
-                <div key={srv.id} className="bg-white p-5 rounded-2xl border border-rose-100/50 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-start gap-2">
-                      <span className="text-[9px] uppercase font-bold text-[#AF2B2D] bg-[#F8F0EC] px-2 py-0.5 rounded">
-                        {srv.category}
-                      </span>
-                      <div className="text-right">
-                        <span className="block text-xs font-black text-[#AF2B2D]">LKR {srv.price.toLocaleString()}</span>
+              {filteredServices.map((srv) => {
+                const ServiceIcon = getServiceIcon(srv);
+                return (
+                  <div key={srv.id} className="bg-white p-5 rounded-2xl border border-rose-100/50 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all flex flex-col justify-between group">
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-start gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <span className="h-11 w-11 shrink-0 rounded-2xl bg-[#FFF4F5] text-[#AF2B2D] border border-[#AF2B2D]/10 flex items-center justify-center group-hover:bg-[#AF2B2D] group-hover:text-white transition-colors">
+                            <ServiceIcon className="h-5 w-5" />
+                          </span>
+                          <span className="text-[9px] uppercase font-bold text-[#AF2B2D] bg-[#F8F0EC] px-2 py-0.5 rounded">
+                            {srv.category}
+                          </span>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <span className="block text-xs font-black text-[#AF2B2D]">LKR {srv.price.toLocaleString()}</span>
+                        </div>
                       </div>
+                      <h3 className="text-sm font-extrabold text-gray-800 group-hover:text-[#AF2B2D] transition-colors">
+                        {srv.name}
+                      </h3>
+                      <p className="text-xs text-gray-500 leading-relaxed font-sans">{srv.description}</p>
                     </div>
-                    <h3 className="text-sm font-extrabold text-gray-800 group-hover:text-[#AF2B2D] transition-colors">
-                      {srv.name}
-                    </h3>
-                    <p className="text-xs text-gray-500 leading-relaxed font-sans">{srv.description}</p>
-                  </div>
 
-                  <div className="flex justify-between items-center mt-5 pt-3 border-t border-rose-50/50 text-[11px]">
-                    <span className="text-gray-400 font-mono flex items-center gap-1">
-                      <Clock className="h-3.5 w-3.5 text-gray-400 inline" />
-                      <span>{srv.duration} Minutes</span>
-                    </span>
-                    <button
-                      onClick={() => triggerQuickBook(srv.id, "service")}
-                      className="px-3.5 py-1 bg-[#AF2B2D] hover:bg-[#8F2023] text-white font-bold rounded-lg transition-colors cursor-pointer"
-                    >
-                      Book Ticket
-                    </button>
+                    <div className="flex justify-between items-center mt-5 pt-3 border-t border-rose-50/50 text-[11px]">
+                      <span className="text-gray-400 font-mono flex items-center gap-1">
+                        <Clock className="h-3.5 w-3.5 text-gray-400 inline" />
+                        <span>{srv.duration} Minutes</span>
+                      </span>
+                      <button
+                        onClick={() => triggerQuickBook(srv.id, "service")}
+                        className="px-3.5 py-1 bg-[#AF2B2D] hover:bg-[#8F2023] text-white font-bold rounded-lg transition-colors cursor-pointer"
+                      >
+                        Book Service
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -897,7 +1043,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                     onClick={() => triggerQuickBook(pkg.id, "package")}
                     className="w-full py-2 bg-[#AF2B2D] hover:bg-[#8F2023] text-white text-xs font-bold rounded-lg transition-colors cursor-pointer uppercase tracking-widest"
                   >
-                    Select Book
+                    Book Package
                   </button>
                 </div>
               </div>
@@ -942,7 +1088,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                   onClick={() => triggerQuickBook("s2", "service")}
                   className="mt-3.5 w-full py-1 bg-[#AF2B2D] hover:bg-[#8F2023] text-white text-[11px] font-bold rounded-lg"
                 >
-                  Book Instant
+                  Book Facial
                 </button>
               </div>
             </div>
@@ -970,7 +1116,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                   onClick={() => triggerQuickBook("h3", "service")}
                   className="mt-3.5 w-full py-1 bg-[#AF2B2D] hover:bg-[#8F2023] text-white text-[11px] font-bold rounded-lg"
                 >
-                  Book Instant
+                  Book Colouring
                 </button>
               </div>
             </div>
@@ -988,7 +1134,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 <div className="pt-1.5 flex items-center gap-4 text-xs font-bold text-[#AF2B2D]">
                   <span>Avg Price: LKR 65,000</span>
                   <span>•</span>
-                  <span>Revenue Contribution: Huge</span>
+                  <span>Best for bridal season</span>
                 </div>
               </div>
               <div className="md:col-span-4 bg-[#F8F0EC] p-4 rounded-xl text-center border border-gray-100">
@@ -1058,7 +1204,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
               onClick={() => onNavigate("book")}
               className="px-5 py-2 whitespace-nowrap bg-[#AF2B2D] hover:bg-[#8F2023] text-white text-xs font-bold rounded-lg shadow cursor-pointer"
             >
-              Get Directions/Book
+              Book a Visit
             </button>
           </div>
 
@@ -1191,7 +1337,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
             {bookingStep === 2 && (
               <form onSubmit={handleCompleteBooking} className="space-y-4 animate-fadeIn">
                 <div className="space-y-2">
-                  <h2 className="text-base font-black text-gray-800">Date & Personal Specialist selection</h2>
+                  <h2 className="text-base font-black text-gray-800">Date & Personal Specialist</h2>
                   <p className="text-xs text-gray-500 font-sans">Pick an open slot. Traditional Kandyan dressings start early.</p>
                 </div>
 
@@ -1243,7 +1389,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                     value={bookingNotes}
                     onChange={(e) => setBookingNotes(e.target.value)}
                     rows={2.5}
-                    placeholder="E.g. sandwood allergy, requests organic strawberry wax..."
+                    placeholder="E.g. sandalwood allergy, requests organic strawberry wax..."
                     className="w-full bg-[#F8F0EC] border border-rose-100 rounded-lg p-2.5 text-xs font-sans text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/30 resize-none"
                   />
                   <span className="block text-[10px] text-gray-400 font-sans leading-none mt-0.5">Note values are added carefully to specialists tablets under the Smart CRM standard.</span>
@@ -1387,13 +1533,13 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 <div className="flex justify-between items-center border-b border-rose-50 pb-4">
                   <h3 className="text-sm font-bold text-gray-800 flex items-center gap-1.5">
                     <Calendar className="h-4.5 w-4.5 text-[#AF2B2D]" />
-                    <span>My Upcoming Screenings ({upcomingBookings.length})</span>
+                    <span>My Upcoming Appointments ({upcomingBookings.length})</span>
                   </h3>
                   <button 
                     onClick={() => onNavigate("book")}
                     className="text-xs font-bold text-[#AF2B2D] hover:text-[#8F2023]"
                   >
-                    + Book New seat
+                    + Book New Appointment
                   </button>
                 </div>
 
