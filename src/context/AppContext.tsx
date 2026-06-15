@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+"use client";
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { User, WorkerDetails, Appointment, Service, Package, InventoryItem, WorkerNotes, UserRole } from "../types";
 import { MOCK_SERVICES, MOCK_PACKAGES, MOCK_USERS, MOCK_WORKERS, MOCK_APPOINTMENTS, MOCK_INVENTORY, MOCK_CLIENT_NOTES } from "../lib/mockData";
@@ -40,88 +42,132 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+const getStoredValue = <T,>(key: string, fallback: T): T => {
+  if (typeof window === "undefined") return fallback;
+
+  const cached = window.localStorage.getItem(key);
+  if (!cached) return fallback;
+
+  try {
+    return JSON.parse(cached) as T;
+  } catch {
+    return fallback;
+  }
+};
+
+const setStoredValue = (key: string, value: unknown) => {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(key, JSON.stringify(value));
+};
+
+const OLD_CUSTOMER_NAME = "Sathurgini Rajendran";
+const UPDATED_CUSTOMER_NAME = "sathurgini kalanan";
+
+const normalizeCustomerName = (name: string) => {
+  return name === OLD_CUSTOMER_NAME ? UPDATED_CUSTOMER_NAME : name;
+};
+
+const normalizeUser = (user: User | null): User | null => {
+  if (!user) return user;
+  if (user.id === "usr_cust1" || user.email === "sathurgini@gmail.com" || user.name === OLD_CUSTOMER_NAME) {
+    return { ...user, name: UPDATED_CUSTOMER_NAME };
+  }
+  return user;
+};
+
+const normalizeAppointments = (appointments: Appointment[]): Appointment[] => {
+  return appointments.map(appointment => ({
+    ...appointment,
+    clientName: normalizeCustomerName(appointment.clientName)
+  }));
+};
+
+const normalizeClientNotes = (notes: WorkerNotes[]): WorkerNotes[] => {
+  return notes.map(note => ({
+    ...note,
+    clientName: normalizeCustomerName(note.clientName)
+  }));
+};
+
 export const AppProviderObj = ({ children }: { children: ReactNode }) => {
+  const [hasLoadedStorage, setHasLoadedStorage] = useState(false);
+
   // Load initial state from LocalStorage or use beautiful default mock data
-  const [currentUser, setCurrentUser] = useState<User | null>(() => {
-    const cached = localStorage.getItem("luminae_user");
-    if (cached) {
-      try { return JSON.parse(cached); } catch { return null; }
-    }
-    // Start with sathurgini as default user so they don't have to face a blank page!
-    return MOCK_USERS.find(u => u.id === "usr_cust1") || null;
-  });
+  // Keep the first render identical on the server and client, then hydrate
+  // browser-only localStorage values after mount.
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
-  const [appointments, setAppointments] = useState<Appointment[]>(() => {
-    const cached = localStorage.getItem("luminae_appointments");
-    return cached ? JSON.parse(cached) : MOCK_APPOINTMENTS;
-  });
+  const [appointments, setAppointments] = useState<Appointment[]>(MOCK_APPOINTMENTS);
 
-  const [workers, setWorkers] = useState<WorkerDetails[]>(() => {
-    const cached = localStorage.getItem("luminae_workers");
-    return cached ? JSON.parse(cached) : MOCK_WORKERS;
-  });
+  const [workers, setWorkers] = useState<WorkerDetails[]>(MOCK_WORKERS);
 
-  const [services, setServices] = useState<Service[]>(() => {
-    const cached = localStorage.getItem("luminae_services");
-    return cached ? JSON.parse(cached) : MOCK_SERVICES;
-  });
+  const [services, setServices] = useState<Service[]>(MOCK_SERVICES);
 
-  const [packages, setPackages] = useState<Package[]>(() => {
-    const cached = localStorage.getItem("luminae_packages");
-    return cached ? JSON.parse(cached) : MOCK_PACKAGES;
-  });
+  const [packages, setPackages] = useState<Package[]>(MOCK_PACKAGES);
 
-  const [inventory, setInventory] = useState<InventoryItem[]>(() => {
-    const cached = localStorage.getItem("luminae_inventory");
-    return cached ? JSON.parse(cached) : MOCK_INVENTORY;
-  });
+  const [inventory, setInventory] = useState<InventoryItem[]>(MOCK_INVENTORY);
 
-  const [clientNotes, setClientNotes] = useState<WorkerNotes[]>(() => {
-    const cached = localStorage.getItem("luminae_client_notes");
-    return cached ? JSON.parse(cached) : MOCK_CLIENT_NOTES;
-  });
+  const [clientNotes, setClientNotes] = useState<WorkerNotes[]>(MOCK_CLIENT_NOTES);
 
-  const [notifications, setNotifications] = useState<string[]>(() => {
-    const cached = localStorage.getItem("luminae_notifications");
-    return cached ? JSON.parse(cached) : [
-      "Welcome to Luminae Beauty & Parlour virtual management environment.",
-      "Today scheduling status: 3 appointments assigned. Traditional Kandyan bridal is at 09:00.",
-      "Low product warning: High-grade Japanese Rebonding Serum is critical (1 left)."
-    ];
-  });
+  const defaultNotifications = [
+    "Welcome to Luminae Beauty & Parlour virtual management environment.",
+    "Today scheduling status: 3 appointments assigned. Traditional Kandyan bridal is at 09:00.",
+    "Low product warning: High-grade Japanese Rebonding Serum is critical (1 left)."
+  ];
+  const [notifications, setNotifications] = useState<string[]>(defaultNotifications);
+
+  useEffect(() => {
+    setCurrentUser(normalizeUser(getStoredValue<User | null>("luminae_user", null)));
+    setAppointments(normalizeAppointments(getStoredValue("luminae_appointments", MOCK_APPOINTMENTS)));
+    setWorkers(getStoredValue("luminae_workers", MOCK_WORKERS));
+    setServices(getStoredValue("luminae_services", MOCK_SERVICES));
+    setPackages(getStoredValue("luminae_packages", MOCK_PACKAGES));
+    setInventory(getStoredValue("luminae_inventory", MOCK_INVENTORY));
+    setClientNotes(normalizeClientNotes(getStoredValue("luminae_client_notes", MOCK_CLIENT_NOTES)));
+    setNotifications(getStoredValue("luminae_notifications", defaultNotifications));
+    setHasLoadedStorage(true);
+  }, []);
 
   // Keep LocalStorage synchronized
   useEffect(() => {
-    localStorage.setItem("luminae_user", JSON.stringify(currentUser));
-  }, [currentUser]);
+    if (!hasLoadedStorage) return;
+    setStoredValue("luminae_user", currentUser);
+  }, [currentUser, hasLoadedStorage]);
 
   useEffect(() => {
-    localStorage.setItem("luminae_appointments", JSON.stringify(appointments));
-  }, [appointments]);
+    if (!hasLoadedStorage) return;
+    setStoredValue("luminae_appointments", appointments);
+  }, [appointments, hasLoadedStorage]);
 
   useEffect(() => {
-    localStorage.setItem("luminae_workers", JSON.stringify(workers));
-  }, [workers]);
+    if (!hasLoadedStorage) return;
+    setStoredValue("luminae_workers", workers);
+  }, [workers, hasLoadedStorage]);
 
   useEffect(() => {
-    localStorage.setItem("luminae_services", JSON.stringify(services));
-  }, [services]);
+    if (!hasLoadedStorage) return;
+    setStoredValue("luminae_services", services);
+  }, [services, hasLoadedStorage]);
 
   useEffect(() => {
-    localStorage.setItem("luminae_packages", JSON.stringify(packages));
-  }, [packages]);
+    if (!hasLoadedStorage) return;
+    setStoredValue("luminae_packages", packages);
+  }, [packages, hasLoadedStorage]);
 
   useEffect(() => {
-    localStorage.setItem("luminae_inventory", JSON.stringify(inventory));
-  }, [inventory]);
+    if (!hasLoadedStorage) return;
+    setStoredValue("luminae_inventory", inventory);
+  }, [inventory, hasLoadedStorage]);
 
   useEffect(() => {
-    localStorage.setItem("luminae_client_notes", JSON.stringify(clientNotes));
-  }, [clientNotes]);
+    if (!hasLoadedStorage) return;
+    setStoredValue("luminae_client_notes", clientNotes);
+  }, [clientNotes, hasLoadedStorage]);
 
   useEffect(() => {
-    localStorage.setItem("luminae_notifications", JSON.stringify(notifications));
-  }, [notifications]);
+    if (!hasLoadedStorage) return;
+    setStoredValue("luminae_notifications", notifications);
+  }, [notifications, hasLoadedStorage]);
 
   // Auth Functions
   const login = (email: string, role: UserRole): boolean => {

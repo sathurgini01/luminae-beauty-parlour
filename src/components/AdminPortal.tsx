@@ -106,7 +106,8 @@ export default function AdminPortal() {
       totalPrice: Number(newPkgPrice) * 1.25, // Mock separate sum
       discountPrice: Number(newPkgPrice),
       description: newPkgDesc || `Luxury ${newPkgName} series.`,
-      inclusions: newPkgInclusions ? newPkgInclusions.split(",").map(i => i.trim()) : ["Exclusive bridal hair dressing", "Hydrating de-tan pack"]
+      inclusions: newPkgInclusions ? newPkgInclusions.split(",").map(i => i.trim()) : ["Exclusive bridal hair dressing", "Hydrating de-tan pack"],
+      isPopular: false
     });
 
     setNewPkgName("");
@@ -860,7 +861,7 @@ export default function AdminPortal() {
                 </thead>
                 <tbody className="divide-y divide-rose-50/50">
                   <tr className="hover:bg-rose-50/10">
-                    <td className="px-6 py-4 font-bold text-gray-800">Sathurgini Rajendran</td>
+                    <td className="px-6 py-4 font-bold text-gray-800">sathurgini kalanan</td>
                     <td className="px-6 py-4 font-mono text-gray-400">+94 77 555 4321</td>
                     <td className="px-6 py-4 font-semibold text-gray-650">3 Completed Treatments</td>
                     <td className="px-6 py-4 font-extrabold text-[#D4537E]">450 Points</td>

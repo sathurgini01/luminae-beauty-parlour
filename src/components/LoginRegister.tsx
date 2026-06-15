@@ -140,7 +140,7 @@ export default function LoginRegister({ initialMode, onSuccess, onNavigate }: Lo
                 onChange={(e) => setRole(e.target.value as UserRole)}
                 className="w-full bg-[#FAF8F6] border border-rose-100 p-2.5 text-xs font-sans rounded-lg text-gray-700 focus:outline-none"
               >
-                <option value="customer">Customer (Sathurgini Rajendran)</option>
+                <option value="customer">Customer (sathurgini kalanan)</option>
                 <option value="worker">Worker (Anusha Perera / Sanduni)</option>
                 <option value="admin">Admin System Owner (Priyanthi)</option>
               </select>

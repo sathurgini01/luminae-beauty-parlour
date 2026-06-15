@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+"use client";
+
 import React, { useState } from "react";
 import { AppProviderObj, useAppState } from "./context/AppContext";
 import Navbar from "./components/Navbar";
@@ -29,7 +31,7 @@ function MainAppLayout() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#FAF8F6] text-[#2C2C2A] font-sans selection:bg-[#D4537E]/25 overflow-x-hidden">
+    <div className="flex flex-col min-h-screen bg-[#F8F0EC] text-[#2C2C2A] font-sans selection:bg-[#AF2B2D]/25 overflow-x-hidden">
       
       {/* Navigation Header */}
       <Navbar onNavigate={setActiveView} activeView={activeView} />
@@ -50,18 +52,18 @@ function MainAppLayout() {
 
         {/* VIEW 2: Secure Administrative panel */}
         {activeView === "admin-dashboard" && (
-          <div className="bg-[#FAF8F6] min-h-screen">
+          <div className="bg-[#F8F0EC] min-h-screen">
             {currentRole === "admin" ? (
               <AdminPortal />
             ) : (
               <div className="max-w-md mx-auto py-24 text-center space-y-4 px-4">
-                <div className="text-rose-600 font-bold bg-rose-50 p-4 rounded-2xl border border-rose-100">
+                <div className="text-[#AF2B2D] font-bold bg-[#F8F0EC] p-4 rounded-2xl border border-rose-100">
                   ⚠️ Administrative Authorization Restricted
                 </div>
                 <p className="text-xs text-gray-400">Please switch your Active role to "Admin (Owner)" in the top simulation controller to gain authorized access.</p>
                 <button 
                   onClick={() => setActiveView("login")}
-                  className="px-4 py-1.5 bg-[#D4537E] text-white text-xs font-bold rounded-lg"
+                  className="px-4 py-1.5 bg-[#AF2B2D] text-white text-xs font-bold rounded-lg"
                 >
                   Go to login
                 </button>
@@ -72,18 +74,18 @@ function MainAppLayout() {
 
         {/* VIEW 3: Therapist/Worker calendar appointments list */}
         {activeView === "worker-dashboard" && (
-          <div className="bg-[#FAF8F6] min-h-screen">
+          <div className="bg-[#F8F0EC] min-h-screen">
             {currentRole === "worker" ? (
               <WorkerPortal />
             ) : (
               <div className="max-w-md mx-auto py-24 text-center space-y-4 px-4">
-                <div className="text-rose-600 font-bold bg-rose-50 p-4 rounded-2xl border border-rose-100">
+                <div className="text-[#AF2B2D] font-bold bg-[#F8F0EC] p-4 rounded-2xl border border-rose-100">
                   ⚠️ Therapist Authorization Restricted
                 </div>
                 <p className="text-xs text-gray-400">Please switch your Active role to "Worker (Anusha)" in the top simulation controller to unlock scheduling features.</p>
                 <button 
                   onClick={() => setActiveView("login")}
-                  className="px-4 py-1.5 bg-[#D4537E] text-white text-xs font-bold rounded-lg"
+                  className="px-4 py-1.5 bg-[#AF2B2D] text-white text-xs font-bold rounded-lg"
                 >
                   Go to login
                 </button>

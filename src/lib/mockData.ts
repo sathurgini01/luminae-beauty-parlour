@@ -146,7 +146,7 @@ export const MOCK_USERS: User[] = [
   { id: "usr_worker2", name: "Sanduni Jayasekara", email: "sanduni@luminae.lk", phone: "+94 72 890 1234", role: "worker", createdAt: "2024-05-01" },
   { id: "usr_worker3", name: "Dilshan Silva", email: "dilshan@luminae.lk", phone: "+94 76 345 6789", role: "worker", createdAt: "2025-01-20" },
 
-  { id: "usr_cust1", name: "Sathurgini Rajendran", email: "sathurgini@gmail.com", phone: "+94 77 555 4321", role: "customer", createdAt: "2025-03-12" },
+  { id: "usr_cust1", name: "sathurgini kalanan", email: "sathurgini@gmail.com", phone: "+94 77 555 4321", role: "customer", createdAt: "2025-03-12" },
   { id: "usr_cust2", name: "Fathima Riza", email: "fathima@gmail.com", phone: "+94 75 987 6543", role: "customer", createdAt: "2025-04-10" },
   { id: "usr_cust3", name: "Nimisha Fernando", email: "nimisha@gmail.com", phone: "+94 70 222 3333", role: "customer", createdAt: "2025-05-18" }
 ];
@@ -158,16 +158,16 @@ export const MOCK_WORKERS: WorkerDetails[] = [
 ];
 
 export const MOCK_CLIENT_NOTES: WorkerNotes[] = [
-  { id: "nt1", clientId: "usr_cust1", clientName: "Sathurgini Rajendran", workerId: "usr_worker1", note: "Has a faint skin allergic reaction to regular tea tree wax. Switched into organic strawberry or cold honey wax with zero redness.", createdAt: "2026-05-12" },
+  { id: "nt1", clientId: "usr_cust1", clientName: "sathurgini kalanan", workerId: "usr_worker1", note: "Has a faint skin allergic reaction to regular tea tree wax. Switched into organic strawberry or cold honey wax with zero redness.", createdAt: "2026-05-12" },
   { id: "nt2", clientId: "usr_cust2", clientName: "Fathima Riza", workerId: "usr_worker2", note: "Prefers Japanese rebonding chemicals with strong protection serum. Hair gets oily very quickly.", createdAt: "2026-06-01" },
-  { id: "nt3", clientId: "usr_cust1", clientName: "Sathurgini Rajendran", workerId: "usr_worker3", note: "Requests light shoulder pressure during wellness massage. Enjoys warm Neeladi hair oil treatment.", createdAt: "2026-06-10" }
+  { id: "nt3", clientId: "usr_cust1", clientName: "sathurgini kalanan", workerId: "usr_worker3", note: "Requests light shoulder pressure during wellness massage. Enjoys warm Neeladi hair oil treatment.", createdAt: "2026-06-10" }
 ];
 
 export const MOCK_APPOINTMENTS: Appointment[] = [
   {
     id: "apt1",
     clientId: "usr_cust1",
-    clientName: "Sathurgini Rajendran",
+    clientName: "sathurgini kalanan",
     clientPhone: "+94 77 555 4321",
     workerId: "usr_worker1",
     workerName: "Anusha Perera",
@@ -218,7 +218,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
   {
     id: "apt4",
     clientId: "usr_cust1",
-    clientName: "Sathurgini Rajendran",
+    clientName: "sathurgini kalanan",
     clientPhone: "+94 77 555 4321",
     workerId: "usr_worker1",
     workerName: "Anusha Perera",
@@ -252,7 +252,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
   {
     id: "apt_past1",
     clientId: "usr_cust1",
-    clientName: "Sathurgini Rajendran",
+    clientName: "sathurgini kalanan",
     clientPhone: "+94 77 555 4321",
     workerId: "usr_worker1",
     workerName: "Anusha Perera",

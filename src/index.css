@@ -1,6 +1,6 @@
-@import "tailwindcss";
-
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300..900;1,300..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+@import "tailwindcss";
 
 @theme {
   --font-sans: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, sans-serif;
@@ -11,7 +11,7 @@
 @layer base {
   body {
     font-family: var(--font-sans);
-    background-color: #FAF8F6;
+    background-color: #F8F0EC;
     color: #2C2C2A;
     letter-spacing: -0.01em;
   }
@@ -49,6 +49,21 @@
   to { opacity: 1; transform: scale(1); }
 }
 
+@keyframes heroZoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+
+@keyframes heroCopy {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes floatSoft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
 /* Editorial Classes */
 .animate-fadeIn {
   animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -64,6 +79,26 @@
 
 .animate-scaleIn {
   animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-heroZoom {
+  animation: heroZoom 16s ease-out both;
+}
+
+.animate-heroCopy {
+  animation: heroCopy 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-floatSoft {
+  animation: floatSoft 5.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-heroZoom,
+  .animate-heroCopy,
+  .animate-floatSoft {
+    animation: none;
+  }
 }
 
 /* Custom scrollbars */
@@ -87,4 +122,3 @@ button:active, .clickable-card:active {
 .luxury-border {
   border-color: rgba(44, 44, 42, 0.1);
 }
-

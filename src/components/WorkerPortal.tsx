@@ -46,7 +46,7 @@ export default function WorkerPortal() {
     if (!newNoteText.trim()) return;
 
     // Pick client details
-    let cName = "Sathurgini Rajendran";
+    let cName = "sathurgini kalanan";
     if (targetClientId === "usr_cust2") cName = "Fathima Riza";
     if (targetClientId === "usr_cust3") cName = "Nimisha Fernando";
 
@@ -289,7 +289,7 @@ export default function WorkerPortal() {
                   onChange={(e) => setTargetClientId(e.target.value)}
                   className="w-full bg-[#FAF8F6] border border-rose-100 p-2 text-xs font-sans rounded focus:outline-none focus:ring-1 focus:ring-pink-300"
                 >
-                  <option value="usr_cust1">Sathurgini Rajendran (Colombo)</option>
+                  <option value="usr_cust1">sathurgini kalanan (Colombo)</option>
                   <option value="usr_cust2">Fathima Riza (K KCC hotel)</option>
                   <option value="usr_cust3">Nimisha Fernando (Mount Lavinia)</option>
                 </select>

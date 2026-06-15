@@ -5,7 +5,7 @@
 
 import React, { useState } from "react";
 import { useAppState } from "../context/AppContext";
-import { Sparkles, Menu, X, User, LogOut, ShieldAlert, Scissors, CalendarCheck2 } from "lucide-react";
+import { Menu, X, User, LogOut, Scissors, CalendarCheck2 } from "lucide-react";
 import { UserRole } from "../types";
 
 interface NavbarProps {
@@ -51,7 +51,7 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
     } else if (role === "customer") {
       setCurrentUserForce({
         id: "usr_cust1",
-        name: "Sathurgini Rajendran",
+        name: "sathurgini kalanan",
         email: "sathurgini@gmail.com",
         phone: "+94 77 555 4321",
         role: "customer",
@@ -71,75 +71,74 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
   };
 
   const getRoleColor = () => {
-    if (!currentUser) return "bg-gray-100 text-gray-700 border-gray-200";
-    if (currentUser.role === "admin") return "bg-pink-100 text-pink-700 border-pink-200";
-    if (currentUser.role === "worker") return "bg-emerald-100 text-emerald-800 border-emerald-200";
-    return "bg-teal-100 text-teal-800 border-teal-200";
+    if (!currentUser) return "bg-[#F8F0EC] text-[#2C2C2A]/80 border-[#2C2C2A]/10";
+    return "bg-[#F8F0EC] text-[#AF2B2D] border-[#AF2B2D]/20";
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-[#FAF8F6]/95 backdrop-blur-md border-b border-[#2C2C2A]/10 animate-slideDown" id="main-nav-bar">
-      {/* Top Simulator Banner */}
-      <div className="bg-[#FAF8F6] border-b border-[#2C2C2A]/5 py-1.5 px-4 text-[10px] uppercase tracking-wider font-mono text-[#2C2C2A] flex justify-between items-center z-50">
-        <div className="flex items-center gap-1.5 overflow-hidden text-ellipsis whitespace-nowrap">
-          <span className="inline-flex h-1.5 w-1.5 rounded-full bg-[#1D9E75] animate-pulse"></span>
-          <span className="font-semibold text-[#7B3224]">Demo Mode:</span>
-          <span className="hidden sm:inline opacity-60">Switch active personas to preview multi-role views instantly</span>
-        </div>
-        <div className="relative">
-          <button 
-            onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
-            className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded-none border text-[9px] font-bold tracking-widest uppercase transition-all cursor-pointer ${getRoleColor()}`}
-            id="role-indicator-button"
-            aria-expanded={isRoleDropdownOpen}
-            aria-haspopup="true"
-          >
-            <span>Role: {getRoleLabel()}</span>
-            <span className="text-[8px]">▼</span>
-          </button>
+    <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#F3C7D4]/45 shadow-sm animate-slideDown" id="main-nav-bar">
+      {activeView !== "landing" && (
+        <div className="bg-[#F8F0EC] border-b border-[#2C2C2A]/10 py-1.5 px-4 text-[10px] uppercase tracking-wider font-mono text-[#2C2C2A]/70 flex justify-between items-center z-50">
+          <div className="flex items-center gap-1.5 overflow-hidden text-ellipsis whitespace-nowrap">
+            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-[#AF2B2D] animate-pulse"></span>
+            <span className="font-semibold text-[#AF2B2D]">Preview:</span>
+            <span className="hidden sm:inline opacity-60">Switch personas for portal testing</span>
+          </div>
+          <div className="relative">
+            <button
+              onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
+              className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded-none border text-[9px] font-bold tracking-widest uppercase transition-all cursor-pointer ${getRoleColor()}`}
+              id="role-indicator-button"
+              aria-expanded={isRoleDropdownOpen}
+              aria-haspopup="true"
+            >
+              <span>Role: {getRoleLabel()}</span>
+              <span className="text-[8px]">▼</span>
+            </button>
 
-          {isRoleDropdownOpen && (
-            <div className="absolute right-0 mt-1.5 w-60 bg-[#FAF8F6] border border-[#2C2C2A]/15 rounded shadow-xl py-1 z-50 animate-fadeIn">
-              <div className="px-3.5 py-2 border-b border-[#2C2C2A]/10 bg-white">
-                <span className="block text-[10px] text-[#2C2C2A] font-bold tracking-widest uppercase">Select Persona:</span>
-                <span className="block text-[9px] text-[#2C2C2A]/60 lowercase">Instantly loads private workspace UI</span>
+            {isRoleDropdownOpen && (
+              <div className="absolute right-0 mt-1.5 w-60 bg-[#F8F0EC] border border-[#2C2C2A]/15 rounded shadow-xl py-1 z-50 animate-fadeIn">
+                <div className="px-3.5 py-2 border-b border-[#2C2C2A]/10 bg-white">
+                  <span className="block text-[10px] text-[#2C2C2A] font-bold tracking-widest uppercase">Select Persona:</span>
+                  <span className="block text-[9px] text-[#2C2C2A]/60 lowercase">Loads private workspace UI</span>
+                </div>
+
+                <button
+                  onClick={() => handleRoleSwitch("admin")}
+                  className="w-full text-left px-3.5 py-2 text-xs text-gray-800 hover:bg-white flex items-center justify-between transition-colors border-l-2 border-transparent hover:border-[#AF2B2D]"
+                >
+                  <span className="font-medium">Priyanthi (Admin / Owner)</span>
+                  <span className="text-[10px] bg-amber-100 text-[#AF2B2D] px-1.5 py-0.5 rounded">Owner</span>
+                </button>
+
+                <button
+                  onClick={() => handleRoleSwitch("worker")}
+                  className="w-full text-left px-3.5 py-2 text-xs text-gray-800 hover:bg-white flex items-center justify-between transition-colors border-l-2 border-transparent hover:border-[#AF2B2D]"
+                >
+                  <span className="font-medium">Anusha Perera (Beautician)</span>
+                  <span className="text-[10px] bg-[#F8F0EC] text-[#AF2B2D] px-1.5 py-0.5 rounded">Worker</span>
+                </button>
+
+                <button
+                  onClick={() => handleRoleSwitch("customer")}
+                  className="w-full text-left px-3.5 py-2 text-xs text-gray-800 hover:bg-white flex items-center justify-between transition-colors border-l-2 border-transparent hover:border-[#AF2B2D]"
+                >
+                  <span className="font-medium">Sathurgini (Loyal Client)</span>
+                  <span className="text-[10px] bg-[#F8F0EC] text-[#AF2B2D] px-1.5 py-0.5 rounded">Client</span>
+                </button>
+
+                <button
+                  onClick={() => handleRoleSwitch("guest")}
+                  className="w-full text-left px-3.5 py-2 text-xs text-gray-800 hover:bg-white flex items-center justify-between transition-colors border-l-2 border-transparent hover:border-gray-400"
+                >
+                  <span className="font-medium">Guest Visitor (Public Site)</span>
+                  <span className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">Visitor</span>
+                </button>
               </div>
-              
-              <button 
-                onClick={() => handleRoleSwitch("admin")}
-                className="w-full text-left px-3.5 py-2 text-xs text-gray-800 hover:bg-white flex items-center justify-between transition-colors border-l-2 border-transparent hover:border-[#7B3224]"
-              >
-                <span className="font-medium">👩‍💼 Priyanthi (Admin / Owner)</span>
-                <span className="text-[10px] bg-amber-100 text-[#7B3224] px-1.5 py-0.5 rounded">Owner</span>
-              </button>
-
-              <button 
-                onClick={() => handleRoleSwitch("worker")}
-                className="w-full text-left px-3.5 py-2 text-xs text-gray-800 hover:bg-white flex items-center justify-between transition-colors border-l-2 border-transparent hover:border-[#1D9E75]"
-              >
-                <span className="font-medium">💇‍♀️ Anusha Perera (Beautician)</span>
-                <span className="text-[10px] bg-emerald-100 text-emerald-850 px-1.5 py-0.5 rounded">Worker</span>
-              </button>
-
-              <button 
-                onClick={() => handleRoleSwitch("customer")}
-                className="w-full text-left px-3.5 py-2 text-xs text-gray-800 hover:bg-white flex items-center justify-between transition-colors border-l-2 border-transparent hover:border-teal-500"
-              >
-                <span className="font-medium">🌸 Sathurgini (Loyal Client)</span>
-                <span className="text-[10px] bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded">Client</span>
-              </button>
-
-              <button 
-                onClick={() => handleRoleSwitch("guest")}
-                className="w-full text-left px-3.5 py-2 text-xs text-gray-800 hover:bg-white flex items-center justify-between transition-colors border-l-2 border-transparent hover:border-gray-400"
-              >
-                <span className="font-medium">🌐 Guest Visitor (Public Site)</span>
-                <span className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">Visitor</span>
-              </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20">
@@ -147,14 +146,21 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
             {/* Brand Logo */}
             <button 
               onClick={() => handleNavClick("landing")}
-              className="flex flex-col items-start group focus:outline-none rounded-lg p-1 text-left cursor-pointer"
+              className="flex items-center gap-3 group focus:outline-none rounded-lg p-1 text-left cursor-pointer"
             >
-              <h1 className="text-3xl sm:text-4xl font-serif tracking-tight font-extralight text-[#7B3224] leading-none mb-0.5 transition-colors group-hover:text-[#2C2C2A] selection:bg-transparent">
-                LUMINAE
-              </h1>
-              <p className="text-[9px] tracking-[0.25em] font-sans font-semibold uppercase opacity-60 leading-none text-[#2C2C2A]">
-                The Sri Lankan Beauty Standard
-              </p>
+              <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#FFF4F5] text-[#D95F8D] ring-1 ring-[#F3C7D4] shadow-sm">
+                <Scissors className="h-5 w-5 rotate-[-22deg]" />
+                <span className="absolute right-1 top-2 h-2.5 w-2.5 rounded-full bg-[#F8B8BE]" />
+                <span className="absolute bottom-2 left-2 h-1.5 w-5 rounded-full bg-[#2C2C2A]/70 rotate-[-24deg]" />
+              </span>
+              <span className="flex flex-col leading-none">
+                <span className="text-2xl sm:text-3xl font-serif tracking-tight font-light text-[#2C2C2A] selection:bg-transparent">
+                  Luminae<span className="text-[#D95F8D]">Beauty</span>
+                </span>
+                <span className="text-[8px] tracking-[0.34em] font-sans font-bold uppercase leading-none text-[#2C2C2A]/55 mt-1">
+                  Beauty & Self Care
+                </span>
+              </span>
             </button>
 
             {/* Desktop Navigation Links */}
@@ -162,7 +168,7 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
               <button 
                 onClick={() => handleNavClick("landing")}
                 className={`inline-flex items-center px-1 pt-1 border-b-2 transition-all cursor-pointer ${
-                  activeView === "landing" ? "border-[#7B3224] text-[#7B3224]" : "border-transparent text-[#2C2C2A]/70 hover:text-[#7B3224] hover:border-[#7B3224]/30"
+                  activeView === "landing" ? "border-[#AF2B2D] text-[#AF2B2D]" : "border-transparent text-[#2C2C2A]/70 hover:text-[#AF2B2D] hover:border-[#AF2B2D]/60"
                 }`}
               >
                 Home
@@ -170,15 +176,15 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
               <button 
                 onClick={() => handleNavClick("services")}
                 className={`inline-flex items-center px-1 pt-1 border-b-2 transition-all cursor-pointer ${
-                  activeView === "services" ? "border-[#7B3224] text-[#7B3224]" : "border-transparent text-[#2C2C2A]/70 hover:text-[#7B3224] hover:border-[#7B3224]/30"
+                  activeView === "services" ? "border-[#AF2B2D] text-[#AF2B2D]" : "border-transparent text-[#2C2C2A]/70 hover:text-[#AF2B2D] hover:border-[#AF2B2D]/60"
                 }`}
               >
-                Services Menu
+                Services
               </button>
               <button 
                 onClick={() => handleNavClick("packages")}
                 className={`inline-flex items-center px-1 pt-1 border-b-2 transition-all cursor-pointer ${
-                  activeView === "packages" ? "border-[#7B3224] text-[#7B3224]" : "border-transparent text-[#2C2C2A]/70 hover:text-[#7B3224] hover:border-[#7B3224]/30"
+                  activeView === "packages" ? "border-[#AF2B2D] text-[#AF2B2D]" : "border-transparent text-[#2C2C2A]/70 hover:text-[#AF2B2D] hover:border-[#AF2B2D]/60"
                 }`}
               >
                 Packages
@@ -186,18 +192,18 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
               <button 
                 onClick={() => handleNavClick("trends")}
                 className={`inline-flex items-center px-1 pt-1 border-b-2 transition-all cursor-pointer ${
-                  activeView === "trends" ? "border-[#7B3224] text-[#7B3224]" : "border-transparent text-[#2C2C2A]/70 hover:text-[#7B3224] hover:border-[#7B3224]/30"
+                  activeView === "trends" ? "border-[#AF2B2D] text-[#AF2B2D]" : "border-transparent text-[#2C2C2A]/70 hover:text-[#AF2B2D] hover:border-[#AF2B2D]/60"
                 }`}
               >
-                2025 SL Trends
+                Gallery
               </button>
               <button 
                 onClick={() => handleNavClick("story")}
                 className={`inline-flex items-center px-1 pt-1 border-b-2 transition-all cursor-pointer ${
-                  activeView === "story" ? "border-[#7B3224] text-[#7B3224]" : "border-transparent text-[#2C2C2A]/70 hover:text-[#7B3224] hover:border-[#7B3224]/30"
+                  activeView === "story" ? "border-[#AF2B2D] text-[#AF2B2D]" : "border-transparent text-[#2C2C2A]/70 hover:text-[#AF2B2D] hover:border-[#AF2B2D]/60"
                 }`}
               >
-                Our Story
+                About Us
               </button>
             </div>
           </div>
@@ -211,7 +217,7 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
                   <button 
                     onClick={() => handleNavClick("admin-dashboard")}
                     className={`flex items-center gap-1 px-3 py-1.5 text-xs font-bold rounded-lg border transition-all cursor-pointer ${
-                      activeView.startsWith("admin") ? "bg-[#7B3224] text-white border-transparent" : "bg-[#FAF8F6] text-[#7B3224] border-rose-200/50 hover:bg-rose-50"
+                      activeView.startsWith("admin") ? "bg-[#AF2B2D] text-white border-transparent" : "bg-[#F8F0EC] text-[#AF2B2D] border-rose-200/50 hover:bg-[#F8F0EC]"
                     }`}
                   >
                     <Scissors className="h-3.5 w-3.5" />
@@ -222,7 +228,7 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
                   <button 
                     onClick={() => handleNavClick("worker-dashboard")}
                     className={`flex items-center gap-1 px-3 py-1.5 text-xs font-bold rounded-lg border transition-all cursor-pointer ${
-                      activeView.startsWith("worker") ? "bg-emerald-600 text-white border-transparent" : "bg-[#FAF8F6] text-emerald-800 border-emerald-200/50 hover:bg-emerald-50"
+                      activeView.startsWith("worker") ? "bg-[#AF2B2D] text-white border-transparent" : "bg-[#F8F0EC] text-[#AF2B2D] border-[#AF2B2D]/20 hover:bg-[#F0E2DC]"
                     }`}
                   >
                     <CalendarCheck2 className="h-3.5 w-3.5" />
@@ -233,7 +239,7 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
                   <button 
                     onClick={() => handleNavClick("customer-dashboard")}
                     className={`flex items-center gap-1 px-3 py-1.5 text-xs font-bold rounded-lg border transition-all cursor-pointer ${
-                      activeView.startsWith("customer") ? "bg-teal-600 text-white border-transparent" : "bg-[#FAF8F6] text-teal-800 border-teal-200/50 hover:bg-teal-50"
+                      activeView.startsWith("customer") ? "bg-[#AF2B2D] text-white border-transparent" : "bg-[#F8F0EC] text-[#AF2B2D] border-[#AF2B2D]/20 hover:bg-[#F0E2DC]"
                     }`}
                   >
                     <User className="h-3.5 w-3.5" />
@@ -243,9 +249,9 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
 
                 <button 
                   onClick={() => handleNavClick("book")}
-                  className="px-4 py-1.5 bg-[#1D9E75] hover:bg-[#15825f] text-white font-bold text-xs rounded-full shadow-sm hover:shadow transition-all cursor-pointer"
+                  className="px-5 py-2 bg-[#D95F8D] hover:bg-[#C94D7C] text-white font-bold text-xs rounded-full shadow-sm hover:shadow transition-all cursor-pointer"
                 >
-                  Book Instant
+                  Book Appointment
                 </button>
 
                 <button 
@@ -253,7 +259,7 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
                     logout();
                     handleNavClick("landing");
                   }}
-                  className="p-1.5 text-[#2C2C2A]/60 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
+                  className="p-1.5 text-[#2C2C2A]/60 hover:text-[#AF2B2D] rounded-lg hover:bg-[#F8F0EC] transition-colors cursor-pointer"
                   title="Sign Out"
                 >
                   <LogOut className="h-4.5 w-4.5" />
@@ -263,21 +269,21 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
               <div className="flex items-center gap-3">
                 <button 
                   onClick={() => handleNavClick("login")}
-                  className="text-xs font-bold text-[#2C2C2A]/80 hover:text-[#7B3224] px-3 py-1.5 cursor-pointer"
+                  className="text-xs font-bold text-[#2C2C2A]/75 hover:text-[#AF2B2D] px-3 py-1.5 cursor-pointer"
                 >
                   Sign In
                 </button>
                 <button 
                   onClick={() => handleNavClick("register")}
-                  className="text-xs font-bold text-white bg-[#7B3224] hover:bg-[#63271b] px-3.5 py-1.5 rounded-full transition-all cursor-pointer"
+                  className="text-xs font-bold text-[#D95F8D] bg-[#FFF4F5] hover:bg-[#FDECEF] px-3.5 py-1.5 rounded-full transition-all cursor-pointer"
                 >
                   Join / Member
                 </button>
                 <button 
                   onClick={() => handleNavClick("book")}
-                  className="px-4 py-1.5 bg-[#1D9E75] hover:bg-[#15825f] text-white font-bold text-xs rounded-full shadow-sm hover:shadow transition-all cursor-pointer"
+                  className="px-5 py-2 bg-[#D95F8D] hover:bg-[#C94D7C] text-white font-bold text-xs rounded-full shadow-sm hover:shadow transition-all cursor-pointer"
                 >
-                  Book Now
+                  Book Appointment
                 </button>
               </div>
             )}
@@ -287,7 +293,7 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
           <div className="flex items-center md:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-1.5 text-[#2C2C2A]/75 hover:text-[#7B3224] focus:outline-none focus:ring-2 focus:ring-[#7B3224]/30 rounded-lg animate-pulse"
+              className="p-1.5 text-[#2C2C2A]/75 hover:text-[#AF2B2D] focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/40 rounded-lg animate-pulse"
               aria-label="Toggle navigation menu"
               aria-expanded={isMobileMenuOpen}
             >
@@ -299,12 +305,12 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
 
       {/* Mobile Links overlay */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-rose-100 shadow-md">
+        <div className="md:hidden bg-white border-t border-[#2C2C2A]/10 shadow-md">
           <div className="px-2 pt-2.5 pb-4 space-y-1">
             <button 
               onClick={() => handleNavClick("landing")}
               className={`block w-full text-left px-3 py-2 text-xs font-bold rounded-md ${
-                activeView === "landing" ? "bg-rose-50 text-[#7B3224]" : "text-gray-700 hover:bg-rose-50/50"
+                activeView === "landing" ? "bg-[#F8F0EC] text-[#AF2B2D]" : "text-[#2C2C2A]/75 hover:bg-[#F8F0EC] hover:text-[#AF2B2D]"
               }`}
             >
               Home
@@ -312,15 +318,15 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
             <button 
               onClick={() => handleNavClick("services")}
               className={`block w-full text-left px-3 py-2 text-xs font-bold rounded-md ${
-                activeView === "services" ? "bg-rose-50 text-[#7B3224]" : "text-gray-700 hover:bg-rose-50/50"
+                activeView === "services" ? "bg-[#F8F0EC] text-[#AF2B2D]" : "text-[#2C2C2A]/75 hover:bg-[#F8F0EC] hover:text-[#AF2B2D]"
               }`}
             >
-              Services Menu
+              Services
             </button>
             <button 
               onClick={() => handleNavClick("packages")}
               className={`block w-full text-left px-3 py-2 text-xs font-bold rounded-md ${
-                activeView === "packages" ? "bg-rose-50 text-[#7B3224]" : "text-gray-700 hover:bg-rose-50/50"
+                activeView === "packages" ? "bg-[#F8F0EC] text-[#AF2B2D]" : "text-[#2C2C2A]/75 hover:bg-[#F8F0EC] hover:text-[#AF2B2D]"
               }`}
             >
               Packages
@@ -328,28 +334,28 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
             <button 
               onClick={() => handleNavClick("trends")}
               className={`block w-full text-left px-3 py-2 text-xs font-bold rounded-md ${
-                activeView === "trends" ? "bg-rose-50 text-[#7B3224]" : "text-gray-700 hover:bg-rose-50/50"
+                activeView === "trends" ? "bg-[#F8F0EC] text-[#AF2B2D]" : "text-[#2C2C2A]/75 hover:bg-[#F8F0EC] hover:text-[#AF2B2D]"
               }`}
             >
-              2025 SL Trends
+              Gallery
             </button>
             <button 
               onClick={() => handleNavClick("story")}
               className={`block w-full text-left px-3 py-2 text-xs font-bold rounded-md ${
-                activeView === "story" ? "bg-rose-50 text-[#7B3224]" : "text-gray-700 hover:bg-rose-50/50"
+                activeView === "story" ? "bg-[#F8F0EC] text-[#AF2B2D]" : "text-[#2C2C2A]/75 hover:bg-[#F8F0EC] hover:text-[#AF2B2D]"
               }`}
             >
-              Our Story
+              About Us
             </button>
 
-            <div className="border-t border-rose-50 pt-3 mt-3 px-3">
+            <div className="border-t border-[#2C2C2A]/10 pt-3 mt-3 px-3">
               {currentUser ? (
                 <div className="space-y-2">
-                  <div className="text-xs text-gray-500 font-semibold">Active: {getRoleLabel()}</div>
+                  <div className="text-xs text-[#2C2C2A]/60 font-semibold">Active: {getRoleLabel()}</div>
                   {currentUser.role === "admin" && (
                     <button 
                       onClick={() => handleNavClick("admin-dashboard")}
-                      className="w-full text-center py-2 text-xs font-bold bg-[#7B3224] text-white rounded-lg shadow-sm"
+                      className="w-full text-center py-2 text-xs font-bold bg-[#AF2B2D] text-white rounded-lg shadow-sm"
                     >
                       Admin Settings
                     </button>
@@ -357,7 +363,7 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
                   {currentUser.role === "worker" && (
                     <button 
                       onClick={() => handleNavClick("worker-dashboard")}
-                      className="w-full text-center py-2 text-xs font-bold bg-emerald-600 text-white rounded-lg shadow-sm"
+                      className="w-full text-center py-2 text-xs font-bold bg-[#AF2B2D] text-white rounded-lg shadow-sm"
                     >
                       Worker Calendar
                     </button>
@@ -365,7 +371,7 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
                   {currentUser.role === "customer" && (
                     <button 
                       onClick={() => handleNavClick("customer-dashboard")}
-                      className="w-full text-center py-2 text-xs font-bold bg-teal-600 text-white rounded-lg shadow-sm"
+                      className="w-full text-center py-2 text-xs font-bold bg-[#AF2B2D] text-white rounded-lg shadow-sm"
                     >
                       My Dashboard Portal
                     </button>
@@ -373,9 +379,9 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
 
                   <button 
                     onClick={() => handleNavClick("book")}
-                    className="w-full text-center py-2 text-xs font-bold bg-[#1D9E75] text-white rounded-lg shadow-sm mt-1"
+                    className="w-full text-center py-2 text-xs font-bold bg-[#AF2B2D] text-white rounded-lg shadow-sm mt-1"
                   >
-                    Instant booking
+                    Book Appointment
                   </button>
 
                   <button 
@@ -383,7 +389,7 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
                       logout();
                       handleNavClick("landing");
                     }}
-                    className="w-full text-center py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 border border-rose-200 rounded-lg mt-1"
+                    className="w-full text-center py-2 text-xs font-bold text-[#2C2C2A]/75 hover:text-[#AF2B2D] hover:bg-[#F8F0EC] border border-[#2C2C2A]/10 rounded-lg mt-1"
                   >
                     Sign Out
                   </button>
@@ -392,21 +398,21 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
                 <div className="space-y-2.5">
                   <button 
                     onClick={() => handleNavClick("login")}
-                    className="block w-full text-center py-2 text-xs font-bold text-gray-700 hover:bg-rose-50 border border-gray-200 rounded-md"
+                    className="block w-full text-center py-2 text-xs font-bold text-[#2C2C2A]/75 hover:text-[#AF2B2D] hover:bg-[#F8F0EC] border border-[#2C2C2A]/10 rounded-md"
                   >
                     Sign In
                   </button>
                   <button 
                     onClick={() => handleNavClick("register")}
-                    className="block w-full text-center py-2 text-xs font-bold bg-[#7B3224] text-white rounded-md"
+                    className="block w-full text-center py-2 text-xs font-bold bg-[#AF2B2D] text-white rounded-md"
                   >
                     Join / Register
                   </button>
                   <button 
                     onClick={() => handleNavClick("book")}
-                    className="block w-full text-center py-2 text-xs font-bold bg-[#1D9E75] text-white rounded-md"
+                    className="block w-full text-center py-2 text-xs font-bold bg-[#AF2B2D] text-white rounded-md"
                   >
-                    Book Now
+                    Book Appointment
                   </button>
                 </div>
               )}
