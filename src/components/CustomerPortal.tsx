@@ -4,6 +4,7 @@
  */
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { useAppState } from "../context/AppContext";
 import { 
   Sparkles, Gift, Clock, Calendar, CheckCircle, Search, Scissors, 
@@ -15,42 +16,23 @@ import type { LucideIcon } from "lucide-react";
 import { Service, Package, Appointment } from "../types";
 import { COMPARISON_ERAS } from "../lib/mockData";
 
-// @ts-ignore
-import beautyHeroModelData from "../assets/images/home-unisex-beauticians-hero.png";
-// @ts-ignore
-import haircutImgData from "../assets/images/style_haircut_cutting.png";
-// @ts-ignore
-import skinFacialImgData from "../assets/images/style_skin_facial_men.png";
-// @ts-ignore
-import nailsImgData from "../assets/images/style_nails_polish.png";
-// @ts-ignore
-import teamKavinduMaleBeauticianData from "../assets/images/team_kavindu_male_beautician.png";
-// @ts-ignore
-import teamDilshanBlowdryData from "../assets/images/team_dilshan_blowdry.png";
-// @ts-ignore
-import teamAnushaFacialMaskData from "../assets/images/team_anusha_facial_mask.png";
-// @ts-ignore
-import teamSanduniNailPolishData from "../assets/images/team_sanduni_nail_polish.png";
-// @ts-ignore
-import aboutLuminaeUnisexStylistsData from "../assets/images/about_luminae_unisex_stylists.png";
-// @ts-ignore
-import gallerySalonInteriorData from "../assets/images/gallery_salon_interior.png";
-// @ts-ignore
-import galleryGroomPrepData from "../assets/images/gallery_groom_prep.png";
-// @ts-ignore
-import galleryMenHairWashData from "../assets/images/gallery_men_hair_wash.png";
-// @ts-ignore
-import galleryBridalPrepData from "../assets/images/gallery_bridal_prep.png";
-// @ts-ignore
-import galleryHairWashData from "../assets/images/gallery_hair_wash.png";
-// @ts-ignore
-import galleryProductsToolsData from "../assets/images/gallery_products_tools.png";
-// @ts-ignore
-import galleryReceptionPaymentData from "../assets/images/gallery_reception_payment.png";
-// @ts-ignore
-import galleryThreadingWaxingData from "../assets/images/gallery_threading_waxing.png";
+import beautyHeroModelData from "../assets/images/home-unisex-beauticians-hero.jpg";
+import haircutImgData from "../assets/images/style_haircut_cutting.jpg";
+import skinFacialImgData from "../assets/images/style_skin_facial_men.jpg";
+import nailsImgData from "../assets/images/style_nails_polish.jpg";
+import teamKavinduMaleBeauticianData from "../assets/images/team_kavindu_male_beautician.jpg";
+import teamDilshanBlowdryData from "../assets/images/team_dilshan_blowdry.jpg";
+import teamAnushaFacialMaskData from "../assets/images/team_anusha_facial_mask.jpg";
+import teamSanduniNailPolishData from "../assets/images/team_sanduni_nail_polish.jpg";
+import aboutLuminaeUnisexStylistsData from "../assets/images/about_luminae_unisex_stylists.jpg";
+import gallerySalonInteriorData from "../assets/images/gallery_salon_interior.jpg";
+import galleryGroomPrepData from "../assets/images/gallery_groom_prep.jpg";
+import galleryMenHairWashData from "../assets/images/gallery_men_hair_wash.jpg";
+import galleryBridalPrepData from "../assets/images/gallery_bridal_prep.jpg";
+import galleryHairWashData from "../assets/images/gallery_hair_wash.jpg";
+import galleryProductsToolsData from "../assets/images/gallery_products_tools.jpg";
+import galleryThreadingWaxingData from "../assets/images/gallery_threading_waxing.jpg";
 
-const beautyHeroModel = beautyHeroModelData.src;
 const haircutImg = haircutImgData.src;
 const skinFacialImg = skinFacialImgData.src;
 const nailsImg = nailsImgData.src;
@@ -65,7 +47,6 @@ const galleryMenHairWash = galleryMenHairWashData.src;
 const galleryBridalPrep = galleryBridalPrepData.src;
 const galleryHairWash = galleryHairWashData.src;
 const galleryProductsTools = galleryProductsToolsData.src;
-const galleryReceptionPayment = galleryReceptionPaymentData.src;
 const galleryThreadingWaxing = galleryThreadingWaxingData.src;
 
 interface CustomerPortalProps {
@@ -249,6 +230,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
   const [bookingTime, setBookingTime] = useState("");
   const [bookingStaff, setBookingStaff] = useState("unassigned");
   const [bookingNotes, setBookingNotes] = useState("");
+  const [bookingError, setBookingError] = useState("");
   const [showQRModal, setShowQRModal] = useState(false);
 
   // Review states inside loyalty portal
@@ -257,6 +239,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
   const [reviewAptId, setReviewAptId] = useState<string | null>(null);
 
   const categories = ["All", "Hair", "Skin & Facial", "Nails", "Body & Waxing", "Bridal & Special Occasion", "Relaxation & Wellness"];
+  const todayDate = new Date().toISOString().split("T")[0];
 
   // 1. SERVICES PAGE FILTER LOGIC
   const filteredServices = services.filter(srv => {
@@ -304,6 +287,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
   };
 
   const toggleChosenService = (serviceId: string) => {
+    setBookingError("");
     setChosenServiceIds(prev => (
       prev.includes(serviceId)
         ? prev.filter(id => id !== serviceId)
@@ -331,7 +315,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
     const customerEmail = bookingCustomerEmail.trim() || currentUser?.email || "";
 
     if (!customerName || !customerPhone || !customerEmail) {
-      alert("Please enter full name, phone number, and email.");
+      setBookingError("Please enter your full name, phone number, and email.");
       return;
     }
 
@@ -376,6 +360,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
     });
 
     // Reset steps
+    setBookingError("");
     setBookingStep(3); // Go to final confirmation screen with LankaQR code display
   };
 
@@ -399,13 +384,16 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
           <section className="relative min-h-[760px] overflow-hidden bg-[#FFF4F5]" id="section-hero">
             <div className="absolute inset-0 bg-[#FFF4F5]" />
             <div className="absolute inset-0 overflow-hidden">
-              <img
-                src={beautyHeroModel}
+              <Image
+                src={beautyHeroModelData}
                 alt="Men and women receiving beauty and grooming care at Luminae"
-                referrerPolicy="no-referrer"
+                fill
+                priority
+                quality={72}
+                sizes="100vw"
                 className="h-full w-full object-cover object-center opacity-100 animate-heroZoom"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#FFF4F5]/90 via-[#FFF4F5]/35 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#FFF4F5]/95 via-[#FFF4F5]/70 to-[#FFF4F5]/10" />
             </div>
 
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[760px] flex items-center">
@@ -415,8 +403,10 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                   <span className="h-px w-16 bg-[#D95F8D]/35" />
                 </div>
                 <h1 className="mt-8 text-5xl sm:text-6xl lg:text-7xl text-[#1F1E1D] font-serif font-light leading-[1.08]">
-                  Groomed, Styled, <br />
-                  Reveal Your <span className="italic text-[#D95F8D]">Confidence</span>
+                  <span className="hero-title-line">Groomed, Styled,</span>
+                  <br />
+                  <span className="hero-title-line delay-1">Reveal Your </span>
+                  <span className="hero-title-line hero-accent-word italic font-normal text-[#B92E5C] [text-shadow:0_1px_0_#fff,0_3px_18px_rgba(255,255,255,0.95)]">Confidence</span>
                 </h1>
                 <div className="my-8 h-px w-80 max-w-full bg-gradient-to-r from-transparent via-[#D95F8D]/35 to-transparent" />
                 <p className="text-sm sm:text-base text-[#2C2C2A]/65 leading-relaxed max-w-lg">
@@ -491,6 +481,8 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                     alt="Male and female Luminae stylists holding hair tools in a unisex salon"
                     className="h-full w-full object-cover"
                     referrerPolicy="no-referrer"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <div className="absolute -bottom-5 right-5 bg-white border border-[#F3C7D4]/80 rounded-2xl px-5 py-4 shadow-lg max-w-[14rem]">
@@ -553,15 +545,16 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
               <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
                 
                 {/* Haircuts Card */}
-                <div 
+                <button
+                  type="button"
                   onClick={() => {
                     setSelectedCategory("Hair");
                     setSearchTerm("");
                     onNavigate("services");
                   }}
-                  className="group relative rounded-[2rem] overflow-hidden aspect-[3/4] cursor-pointer shadow-md shadow-black/5 hover:-translate-y-2 transition-all duration-500 border border-neutral-100"
+                  className="group relative rounded-[2rem] overflow-hidden aspect-[3/4] cursor-pointer shadow-md shadow-black/5 hover:-translate-y-2 transition-all duration-500 border border-neutral-100 text-left focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/40"
                 >
-                  <img src={haircutImg} alt="Haircuts" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" referrerPolicy="no-referrer" />
+                  <img src={haircutImg} alt="Haircuts" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" referrerPolicy="no-referrer" loading="lazy" decoding="async" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                   <div className="absolute top-4 left-4">
                     <span className="px-4 py-1.5 bg-white/90 backdrop-blur-sm text-[#2C2C2A] text-[10px] uppercase font-bold tracking-widest rounded-full shadow">
@@ -577,18 +570,19 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                       →
                     </span>
                   </div>
-                </div>
+                </button>
 
                 {/* Skin & Facial Card */}
-                <div 
+                <button
+                  type="button"
                   onClick={() => {
                     setSelectedCategory("Skin & Facial");
                     setSearchTerm("");
                     onNavigate("services");
                   }}
-                  className="group relative rounded-[2rem] overflow-hidden aspect-[3/4] cursor-pointer shadow-md shadow-black/5 hover:-translate-y-2 transition-all duration-500 border border-neutral-100"
+                  className="group relative rounded-[2rem] overflow-hidden aspect-[3/4] cursor-pointer shadow-md shadow-black/5 hover:-translate-y-2 transition-all duration-500 border border-neutral-100 text-left focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/40"
                 >
-                  <img src={skinFacialImg} alt="Man receiving a professional facial treatment" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" referrerPolicy="no-referrer" />
+                  <img src={skinFacialImg} alt="Man receiving a professional facial treatment" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" referrerPolicy="no-referrer" loading="lazy" decoding="async" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                   <div className="absolute top-4 left-4">
                     <span className="px-4 py-1.5 bg-white/90 backdrop-blur-sm text-[#2C2C2A] text-[10px] uppercase font-bold tracking-widest rounded-full shadow">
@@ -604,18 +598,19 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                       →
                     </span>
                   </div>
-                </div>
+                </button>
 
                 {/* Nails Card */}
-                <div 
+                <button
+                  type="button"
                   onClick={() => {
                     setSelectedCategory("Nails");
                     setSearchTerm("");
                     onNavigate("services");
                   }}
-                  className="group relative rounded-[2rem] overflow-hidden aspect-[3/4] cursor-pointer shadow-md shadow-black/5 hover:-translate-y-2 transition-all duration-500 border border-neutral-100"
+                  className="group relative rounded-[2rem] overflow-hidden aspect-[3/4] cursor-pointer shadow-md shadow-black/5 hover:-translate-y-2 transition-all duration-500 border border-neutral-100 text-left focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/40"
                 >
-                  <img src={nailsImg} alt="Professional polished nails manicure" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" referrerPolicy="no-referrer" />
+                  <img src={nailsImg} alt="Professional polished nails manicure" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" referrerPolicy="no-referrer" loading="lazy" decoding="async" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                   <div className="absolute top-4 left-4">
                     <span className="px-4 py-1.5 bg-white/90 backdrop-blur-sm text-[#2C2C2A] text-[10px] uppercase font-bold tracking-widest rounded-full shadow">
@@ -631,7 +626,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                       →
                     </span>
                   </div>
-                </div>
+                </button>
 
               </div>
             </div>
@@ -753,7 +748,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 <div className="bg-[#E6DCD3] p-3 rounded-2xl border border-black/5 hover:border-[#AF2B2D]/30 transition-all duration-300 shadow-sm flex flex-col justify-between">
                   <div>
                     <div className="aspect-[4/5] rounded-xl overflow-hidden relative group">
-                      <img src={teamKavinduMaleBeautician} alt="Kavindu Perera male beautician holding salon tools" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                      <img src={teamKavinduMaleBeautician} alt="Kavindu Perera male beautician holding salon tools" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" loading="lazy" decoding="async" />
                       <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-[#AF2B2D] shadow-sm">Beautician</span>
                     </div>
                     <div className="pt-4 pb-2 px-2 text-center sm:text-left">
@@ -768,7 +763,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 <div className="bg-[#E6DCD3] p-3 rounded-2xl border border-black/5 hover:border-[#AF2B2D]/30 transition-all duration-300 shadow-sm sm:translate-y-4 flex flex-col justify-between">
                   <div>
                     <div className="aspect-[4/5] rounded-xl overflow-hidden relative group">
-                      <img src={teamDilshanBlowdry} alt="Dilshan Silva blow drying and grooming a client's hair" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                      <img src={teamDilshanBlowdry} alt="Dilshan Silva blow drying and grooming a client's hair" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" loading="lazy" decoding="async" />
                       <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-[#AF2B2D] shadow-sm">Grooming</span>
                     </div>
                     <div className="pt-4 pb-2 px-2 text-center sm:text-left">
@@ -783,7 +778,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 <div className="bg-[#E6DCD3] p-3 rounded-2xl border border-black/5 hover:border-[#AF2B2D]/30 transition-all duration-300 shadow-sm flex flex-col justify-between">
                   <div>
                     <div className="aspect-[4/5] rounded-xl overflow-hidden relative group">
-                      <img src={teamAnushaFacialMask} alt="Anusha Perera applying a hydrating facial mask" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                      <img src={teamAnushaFacialMask} alt="Anusha Perera applying a hydrating facial mask" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" loading="lazy" decoding="async" />
                       <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-[#AF2B2D] shadow-sm">Skin Care</span>
                     </div>
                     <div className="pt-4 pb-2 px-2 text-center sm:text-left">
@@ -798,7 +793,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 <div className="bg-[#E6DCD3] p-3 rounded-2xl border border-black/5 hover:border-[#AF2B2D]/30 transition-all duration-300 shadow-sm sm:translate-y-4 xl:translate-y-0 flex flex-col justify-between">
                   <div>
                     <div className="aspect-[4/5] rounded-xl overflow-hidden relative group">
-                      <img src={teamSanduniNailPolish} alt="Sanduni Jayasekara painting gel nail polish" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                      <img src={teamSanduniNailPolish} alt="Sanduni Jayasekara painting gel nail polish" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" loading="lazy" decoding="async" />
                       <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-[#AF2B2D] shadow-sm">Nails</span>
                     </div>
                     <div className="pt-4 pb-2 px-2 text-center sm:text-left">
@@ -842,7 +837,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 { src: galleryHairWash, title: "Threading Care", span: "md:col-span-2" }
               ].map((item) => (
                 <div key={item.title} className={`group relative aspect-[4/3] overflow-hidden rounded-2xl bg-white border border-white shadow-sm ${item.span}`}>
-                  <img src={item.src} alt={`Luminae gallery - ${item.title}`} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" referrerPolicy="no-referrer" />
+                  <img src={item.src} alt={`Luminae gallery - ${item.title}`} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" referrerPolicy="no-referrer" loading="lazy" decoding="async" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/5 to-transparent opacity-90" />
                   <span className="absolute bottom-3 left-3 rounded-full bg-white/90 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-[#AF2B2D] shadow-sm">
                     {item.title}
@@ -1685,6 +1680,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                             key={s.id}
                             type="button"
                             onClick={() => toggleChosenService(s.id)}
+                            aria-pressed={isSelected}
                             className={`w-full text-left rounded-xl border p-3 transition-all cursor-pointer ${
                               isSelected
                                 ? "bg-white border-[#AF2B2D] shadow-sm"
@@ -1729,7 +1725,11 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                           <button
                             key={p.id}
                             type="button"
-                            onClick={() => setChosenPackageId(p.id)}
+                            onClick={() => {
+                              setBookingError("");
+                              setChosenPackageId(p.id);
+                            }}
+                            aria-pressed={isSelected}
                             className={`w-full text-left rounded-xl border p-4 transition-all cursor-pointer ${
                               isSelected
                                 ? "bg-white border-[#AF2B2D] shadow-sm"
@@ -1791,16 +1791,22 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 )}
 
                 <div className="pt-2 max-w-2xl mx-auto">
+                  {bookingError && (
+                    <p className="mb-3 rounded-lg border border-[#AF2B2D]/20 bg-[#FFF4F5] px-3 py-2 text-xs font-bold text-[#AF2B2D]" role="alert">
+                      {bookingError}
+                    </p>
+                  )}
                   <button
                     onClick={() => {
                       if (selectedServiceType === "service" && selectedServices.length === 0) {
-                        alert("Please select at least one service first.");
+                        setBookingError("Please select at least one service first.");
                         return;
                       }
                       if (selectedServiceType === "package" && !chosenPackageId) {
-                        alert("Please select a package first.");
+                        setBookingError("Please select a package first.");
                         return;
                       }
+                      setBookingError("");
                       setBookingStep(2);
                     }}
                     className="w-full py-2 bg-[#AF2B2D] hover:bg-[#8F2023] text-white text-xs font-bold rounded-lg transition-transform hover:scale-[1.01] cursor-pointer text-center flex items-center justify-center gap-1 shadow"
@@ -1822,10 +1828,16 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
 
                 <div className="rounded-2xl border border-rose-100 bg-[#FFFDFD] p-4 sm:p-5 space-y-4">
                   <span className="block text-[10px] font-black uppercase tracking-widest text-[#AF2B2D]">Customer Details</span>
+                  {bookingError && (
+                    <p className="rounded-lg border border-[#AF2B2D]/20 bg-[#FFF4F5] px-3 py-2 text-xs font-bold text-[#AF2B2D]" role="alert">
+                      {bookingError}
+                    </p>
+                  )}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-1.5 sm:col-span-2">
-                    <label className="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Full Name:</label>
+                    <label htmlFor="booking-customer-name" className="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Full Name:</label>
                     <input
+                      id="booking-customer-name"
                       type="text"
                       value={bookingCustomerName}
                       onChange={(e) => setBookingCustomerName(e.target.value)}
@@ -1835,8 +1847,9 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Phone / WhatsApp:</label>
+                    <label htmlFor="booking-customer-phone" className="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Phone / WhatsApp:</label>
                     <input
+                      id="booking-customer-phone"
                       type="tel"
                       value={bookingCustomerPhone}
                       onChange={(e) => setBookingCustomerPhone(e.target.value)}
@@ -1846,8 +1859,9 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Email:</label>
+                    <label htmlFor="booking-customer-email" className="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Email:</label>
                     <input
+                      id="booking-customer-email"
                       type="email"
                       value={bookingCustomerEmail}
                       onChange={(e) => setBookingCustomerEmail(e.target.value)}
@@ -1863,8 +1877,9 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                   <span className="block text-[10px] font-black uppercase tracking-widest text-[#AF2B2D]">Visit Preference</span>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] font-extrabold text-[#2C2C2A] uppercase tracking-widest">Customer Option:</label>
+                    <label htmlFor="booking-customer-gender" className="block text-[10px] font-extrabold text-[#2C2C2A] uppercase tracking-widest">Customer Option:</label>
                     <select
+                      id="booking-customer-gender"
                       value={bookingCustomerGender}
                       onChange={(e) => setBookingCustomerGender(e.target.value as "Male" | "Female" | "Prefer not to say")}
                       className="w-full bg-[#F8F0EC] border border-rose-100 rounded-lg p-2.5 text-xs font-sans text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/30"
@@ -1876,8 +1891,9 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                     </select>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] font-extrabold text-[#2C2C2A] uppercase tracking-widest">Branch:</label>
+                    <label htmlFor="booking-branch" className="block text-[10px] font-extrabold text-[#2C2C2A] uppercase tracking-widest">Branch:</label>
                     <select
+                      id="booking-branch"
                       value={bookingBranch}
                       onChange={(e) => setBookingBranch(e.target.value)}
                       className="w-full bg-[#F8F0EC] border border-rose-100 rounded-lg p-2.5 text-xs font-sans text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/30"
@@ -1894,18 +1910,21 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                   <span className="block text-[10px] font-black uppercase tracking-widest text-[#AF2B2D]">Schedule & Specialist</span>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Date:</label>
+                    <label htmlFor="booking-date" className="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Date:</label>
                     <input
+                      id="booking-date"
                       type="date"
                       value={bookingDate}
                       onChange={(e) => setBookingDate(e.target.value)}
+                      min={todayDate}
                       className="w-full bg-[#F8F0EC] border border-rose-100 rounded-lg p-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/30 font-sans block"
                       required
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] font-extrabold text-[#2C2C2A] uppercase tracking-widest">Time Slot:</label>
+                    <label htmlFor="booking-time" className="block text-[10px] font-extrabold text-[#2C2C2A] uppercase tracking-widest">Time Slot:</label>
                     <select
+                      id="booking-time"
                       value={bookingTime}
                       onChange={(e) => setBookingTime(e.target.value)}
                       className="w-full bg-[#F8F0EC] border border-rose-100 rounded-lg p-2.5 text-xs font-sans text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/30"
@@ -1920,8 +1939,9 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                   </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-extrabold text-[#2C2C2A] uppercase tracking-widest">Preferred Beautician:</label>
+                  <label htmlFor="booking-staff" className="block text-[10px] font-extrabold text-[#2C2C2A] uppercase tracking-widest">Preferred Beautician:</label>
                   <select
+                    id="booking-staff"
                     value={bookingStaff}
                     onChange={(e) => setBookingStaff(e.target.value)}
                     className="w-full bg-[#F8F0EC] border border-rose-100 rounded-lg p-2.5 text-xs font-sans text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/30"
@@ -1934,8 +1954,9 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-extrabold text-[#2C2C2A] uppercase tracking-widest">Payment Preference:</label>
+                  <label htmlFor="booking-payment" className="block text-[10px] font-extrabold text-[#2C2C2A] uppercase tracking-widest">Payment Preference:</label>
                   <select
+                    id="booking-payment"
                     value={bookingPaymentMethod}
                     onChange={(e) => setBookingPaymentMethod(e.target.value)}
                     className="w-full bg-[#F8F0EC] border border-rose-100 rounded-lg p-2.5 text-xs font-sans text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/30"
@@ -1951,8 +1972,9 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 </div>
 
                 <div className="rounded-2xl border border-rose-100 bg-[#FFFDFD] p-4 sm:p-5 space-y-3">
-                  <label className="block text-[10px] font-extrabold text-gray-400 tracking-widest uppercase">Special Notes / Allergies / Hair specifications:</label>
+                  <label htmlFor="booking-notes" className="block text-[10px] font-extrabold text-gray-400 tracking-widest uppercase">Special Notes / Allergies / Hair specifications:</label>
                   <textarea
+                    id="booking-notes"
                     value={bookingNotes}
                     onChange={(e) => setBookingNotes(e.target.value)}
                     rows={2.5}

@@ -59,6 +59,16 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes heroTitleLine {
+  from { opacity: 0; transform: translateY(34px); filter: blur(8px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+@keyframes heroAccentGlow {
+  0%, 100% { color: #B92E5C; text-shadow: 0 1px 0 #fff, 0 3px 18px rgba(255,255,255,0.95); }
+  50% { color: #D95F8D; text-shadow: 0 1px 0 #fff, 0 4px 22px rgba(217,95,141,0.45); }
+}
+
 @keyframes floatSoft {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
@@ -89,15 +99,52 @@
   animation: heroCopy 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+.hero-title-line {
+  display: inline-block;
+  opacity: 0;
+  animation: heroTitleLine 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-title-line.delay-1 {
+  animation-delay: 0.15s;
+}
+
+.hero-title-line.delay-2 {
+  animation-delay: 0.32s;
+}
+
+.hero-accent-word {
+  animation: heroTitleLine 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.48s both,
+    heroAccentGlow 3.4s ease-in-out 1.25s infinite;
+}
+
 .animate-floatSoft {
   animation: floatSoft 5.5s ease-in-out infinite;
+}
+
+@media (max-width: 768px) {
+  .animate-heroZoom,
+  .animate-floatSoft,
+  .hero-accent-word {
+    animation: none;
+  }
+
+  .hero-title-line,
+  .hero-accent-word {
+    opacity: 1;
+    filter: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .animate-heroZoom,
   .animate-heroCopy,
+  .hero-title-line,
+  .hero-accent-word,
   .animate-floatSoft {
     animation: none;
+    opacity: 1;
+    filter: none;
   }
 }
 

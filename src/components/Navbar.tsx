@@ -91,13 +91,14 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
               id="role-indicator-button"
               aria-expanded={isRoleDropdownOpen}
               aria-haspopup="true"
+              aria-controls="role-switcher-menu"
             >
               <span>Role: {getRoleLabel()}</span>
               <span className="text-[8px]">▼</span>
             </button>
 
             {isRoleDropdownOpen && (
-              <div className="absolute right-0 mt-1.5 w-60 bg-[#F8F0EC] border border-[#2C2C2A]/15 rounded shadow-xl py-1 z-50 animate-fadeIn">
+              <div id="role-switcher-menu" className="absolute right-0 mt-1.5 w-60 bg-[#F8F0EC] border border-[#2C2C2A]/15 rounded shadow-xl py-1 z-50 animate-fadeIn">
                 <div className="px-3.5 py-2 border-b border-[#2C2C2A]/10 bg-white">
                   <span className="block text-[10px] text-[#2C2C2A] font-bold tracking-widest uppercase">Account Access:</span>
                   <span className="block text-[9px] text-[#2C2C2A]/60 lowercase">Open a customer, specialist, or owner area</span>
@@ -147,6 +148,7 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
             <button 
               onClick={() => handleNavClick("landing")}
               className="flex items-center gap-3 group focus:outline-none rounded-xl p-1 text-left cursor-pointer"
+              aria-label="Go to Luminae Beauty home"
             >
               <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#FFF4F5] text-[#AF2B2D] ring-1 ring-[#F3C7D4] shadow-[0_8px_20px_rgba(175,43,45,0.12)] group-hover:-translate-y-0.5 group-hover:shadow-[0_10px_24px_rgba(175,43,45,0.18)]">
                 <span className="absolute inset-1.5 rounded-xl border border-white/85" />
@@ -263,6 +265,7 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
                   }}
                   className="p-1.5 text-[#2C2C2A]/60 hover:text-[#AF2B2D] rounded-lg hover:bg-[#F8F0EC] transition-colors cursor-pointer"
                   title="Sign Out"
+                  aria-label="Sign out"
                 >
                   <LogOut className="h-4.5 w-4.5" />
                 </button>
@@ -298,6 +301,7 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
               className="p-1.5 text-[#2C2C2A]/75 hover:text-[#AF2B2D] focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/40 rounded-lg animate-pulse"
               aria-label="Toggle navigation menu"
               aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-navigation-menu"
             >
               {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -307,7 +311,7 @@ export default function Navbar({ onNavigate, activeView }: NavbarProps) {
 
       {/* Mobile Links overlay */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-[#2C2C2A]/10 shadow-md">
+        <div id="mobile-navigation-menu" className="md:hidden bg-white border-t border-[#2C2C2A]/10 shadow-md">
           <div className="px-2 pt-2.5 pb-4 space-y-1">
             <button 
               onClick={() => handleNavClick("landing")}

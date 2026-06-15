@@ -6,14 +6,22 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { AppProviderObj, useAppState } from "./context/AppContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import WhatsAppButton from "./components/WhatsAppButton";
 import CustomerPortal from "./components/CustomerPortal";
-import AdminPortal from "./components/AdminPortal";
-import WorkerPortal from "./components/WorkerPortal";
-import LoginRegister from "./components/LoginRegister";
+
+const AdminPortal = dynamic(() => import("./components/AdminPortal"), {
+  loading: () => <div className="py-24 text-center text-xs font-bold text-[#AF2B2D]">Loading admin workspace...</div>
+});
+const WorkerPortal = dynamic(() => import("./components/WorkerPortal"), {
+  loading: () => <div className="py-24 text-center text-xs font-bold text-[#AF2B2D]">Loading specialist workspace...</div>
+});
+const LoginRegister = dynamic(() => import("./components/LoginRegister"), {
+  loading: () => <div className="py-24 text-center text-xs font-bold text-[#AF2B2D]">Loading account form...</div>
+});
 
 const viewToPath: Record<string, string> = {
   landing: "/",

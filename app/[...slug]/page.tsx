@@ -1,8 +1,5 @@
 import App from "../../src/App";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 const slugToView = (slug: string[] = []) => {
   const path = `/${slug.join("/")}`;
   if (path === "/services") return "services";
@@ -18,6 +15,22 @@ const slugToView = (slug: string[] = []) => {
   if (path === "/specialist" || path === "/worker") return "worker-dashboard";
   return "landing";
 };
+
+export function generateStaticParams() {
+  return [
+    { slug: ["services"] },
+    { slug: ["packages"] },
+    { slug: ["trends"] },
+    { slug: ["about"] },
+    { slug: ["booking"] },
+    { slug: ["login"] },
+    { slug: ["register"] },
+    { slug: ["forgot-password"] },
+    { slug: ["customer", "bookings"] },
+    { slug: ["admin"] },
+    { slug: ["specialist"] }
+  ];
+}
 
 export default async function RoutedPage({
   params,

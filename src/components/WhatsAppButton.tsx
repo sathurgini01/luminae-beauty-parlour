@@ -65,14 +65,13 @@ export default function WhatsAppButton() {
       {/* Floating Action Button */}
       <button
         onClick={isOpen ? () => setIsOpen(false) : handleOpen}
-        className="h-14 w-14 rounded-full bg-[#1D9E75] hover:bg-[#15825f] text-white flex items-center justify-center shadow-xl hover:scale-105 transition-all duration-300 ring-4 ring-emerald-500/10 cursor-pointer animate-bounce relative"
+        className="h-14 w-14 rounded-full bg-[#1D9E75] hover:bg-[#15825f] text-white flex items-center justify-center shadow-xl hover:scale-105 transition-all duration-300 ring-4 ring-emerald-500/10 cursor-pointer relative"
         title="WhatsApp Assistant CRM"
         aria-haspopup="dialog"
         aria-expanded={isOpen}
       >
         <MessageSquare className="h-6 w-6 stroke-[2.5]" id="whatsapp-icon" />
         <span className="absolute -top-1 -right-1 flex h-4 w-4">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-4 w-4 bg-rose-500 text-[9px] font-bold text-white items-center justify-center">1</span>
         </span>
       </button>
