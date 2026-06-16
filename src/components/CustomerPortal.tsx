@@ -389,8 +389,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 sizes="100vw"
                 className="h-full w-full object-cover object-center opacity-100 animate-heroZoom"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#FFF4F5]/90 via-[#FFF4F5]/42 to-transparent" />
-              <div className="absolute inset-y-0 left-0 w-[62%] bg-gradient-to-r from-[#FFF4F5]/45 via-[#FFF4F5]/18 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#FFF4F5]/44 via-[#FFF4F5]/14 to-transparent" />
             </div>
 
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[760px] flex items-center">
