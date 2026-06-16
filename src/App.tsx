@@ -9,9 +9,16 @@ import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { AppProviderObj, useAppState } from "./context/AppContext";
 import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import WhatsAppButton from "./components/WhatsAppButton";
 import CustomerPortal from "./components/CustomerPortal";
+
+const Footer = dynamic(() => import("./components/Footer"), {
+  loading: () => null
+});
+
+const WhatsAppButton = dynamic(() => import("./components/WhatsAppButton"), {
+  ssr: false,
+  loading: () => null
+});
 
 const AdminPortal = dynamic(() => import("./components/AdminPortal"), {
   loading: () => <div className="py-24 text-center text-xs font-bold text-[#AF2B2D]">Loading admin workspace...</div>
@@ -58,6 +65,7 @@ const pathToView = (pathname: string) => {
 function MainAppLayout({ initialView }: { initialView: string }) {
   const { currentRole } = useAppState();
   const [activeView, setActiveView] = useState(initialView);
+  const [showFloatingContact, setShowFloatingContact] = useState(false);
 
   const handleNavigate = (view: string) => {
     setActiveView(view);
@@ -78,6 +86,14 @@ function MainAppLayout({ initialView }: { initialView: string }) {
 
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  useEffect(() => {
+    const schedule = window.requestIdleCallback || ((callback: IdleRequestCallback) => window.setTimeout(callback, 1600));
+    const cancel = window.cancelIdleCallback || window.clearTimeout;
+    const id = schedule(() => setShowFloatingContact(true));
+
+    return () => cancel(id);
   }, []);
 
   // Handle successful logins redirects
@@ -167,7 +183,7 @@ function MainAppLayout({ initialView }: { initialView: string }) {
       </main>
 
       {/* Floating WhatsApp enquiry widget */}
-      <WhatsAppButton />
+      {showFloatingContact && <WhatsAppButton />}
 
       {/* Footer with contact details and directions */}
       <Footer onNavigate={handleNavigate} />

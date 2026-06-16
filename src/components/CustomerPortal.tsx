@@ -24,7 +24,7 @@ import teamKavinduMaleBeauticianData from "../assets/images/team_kavindu_male_be
 import teamDilshanBlowdryData from "../assets/images/team_dilshan_blowdry.jpg";
 import teamAnushaFacialMaskData from "../assets/images/team_anusha_facial_mask.jpg";
 import teamSanduniNailPolishData from "../assets/images/team_sanduni_nail_polish.jpg";
-import aboutLuminaeUnisexStylistsData from "../assets/images/about_luminae_unisex_stylists_rose_dress.png";
+import aboutLuminaeUnisexStylistsData from "../assets/images/about_luminae_unisex_stylists.jpg";
 import gallerySalonInteriorData from "../assets/images/gallery_salon_interior.jpg";
 import galleryGroomPrepData from "../assets/images/gallery_groom_prep.jpg";
 import galleryMenHairWashData from "../assets/images/gallery_men_hair_wash.jpg";
@@ -33,14 +33,10 @@ import galleryHairWashData from "../assets/images/gallery_hair_wash.jpg";
 import galleryProductsToolsData from "../assets/images/gallery_products_tools.jpg";
 import galleryThreadingWaxingData from "../assets/images/gallery_threading_waxing.jpg";
 
-const haircutImg = haircutImgData.src;
-const skinFacialImg = skinFacialImgData.src;
-const nailsImg = nailsImgData.src;
 const teamKavinduMaleBeautician = teamKavinduMaleBeauticianData.src;
 const teamDilshanBlowdry = teamDilshanBlowdryData.src;
 const teamAnushaFacialMask = teamAnushaFacialMaskData.src;
 const teamSanduniNailPolish = teamSanduniNailPolishData.src;
-const aboutLuminaeUnisexStylists = aboutLuminaeUnisexStylistsData.src;
 const gallerySalonInterior = gallerySalonInteriorData.src;
 const galleryGroomPrep = galleryGroomPrepData.src;
 const galleryMenHairWash = galleryMenHairWashData.src;
@@ -477,12 +473,12 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               <div className="lg:col-span-5 relative">
                 <div className="aspect-[4/5] overflow-hidden rounded-[2rem] border border-[#F3C7D4]/60 shadow-sm bg-white">
-                  <img
-                    src={aboutLuminaeUnisexStylists}
+                  <Image
+                    src={aboutLuminaeUnisexStylistsData}
                     alt="Male and female Luminae stylists holding hair tools in a unisex salon"
                     className="h-full w-full object-cover"
-                    referrerPolicy="no-referrer"
                     loading="lazy"
+                    sizes="(min-width: 1024px) 38vw, 100vw"
                     decoding="async"
                   />
                 </div>
@@ -555,7 +551,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                   }}
                   className="group relative rounded-[2rem] overflow-hidden aspect-[3/4] cursor-pointer shadow-md shadow-black/5 hover:-translate-y-2 transition-all duration-500 border border-neutral-100 text-left focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/40"
                 >
-                  <img src={haircutImg} alt="Haircuts" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" referrerPolicy="no-referrer" loading="lazy" decoding="async" />
+                  <Image src={haircutImgData} alt="Haircuts" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" sizes="(min-width: 1024px) 22vw, (min-width: 640px) 33vw, 100vw" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                   <div className="absolute top-4 left-4">
                     <span className="px-4 py-1.5 bg-white/90 backdrop-blur-sm text-[#2C2C2A] text-[10px] uppercase font-bold tracking-widest rounded-full shadow">
@@ -583,7 +579,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                   }}
                   className="group relative rounded-[2rem] overflow-hidden aspect-[3/4] cursor-pointer shadow-md shadow-black/5 hover:-translate-y-2 transition-all duration-500 border border-neutral-100 text-left focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/40"
                 >
-                  <img src={skinFacialImg} alt="Man receiving a professional facial treatment" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" referrerPolicy="no-referrer" loading="lazy" decoding="async" />
+                  <Image src={skinFacialImgData} alt="Man receiving a professional facial treatment" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" sizes="(min-width: 1024px) 22vw, (min-width: 640px) 33vw, 100vw" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                   <div className="absolute top-4 left-4">
                     <span className="px-4 py-1.5 bg-white/90 backdrop-blur-sm text-[#2C2C2A] text-[10px] uppercase font-bold tracking-widest rounded-full shadow">
@@ -611,7 +607,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                   }}
                   className="group relative rounded-[2rem] overflow-hidden aspect-[3/4] cursor-pointer shadow-md shadow-black/5 hover:-translate-y-2 transition-all duration-500 border border-neutral-100 text-left focus:outline-none focus:ring-2 focus:ring-[#AF2B2D]/40"
                 >
-                  <img src={nailsImg} alt="Professional polished nails manicure" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" referrerPolicy="no-referrer" loading="lazy" decoding="async" />
+                  <Image src={nailsImgData} alt="Professional polished nails manicure" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" sizes="(min-width: 1024px) 22vw, (min-width: 640px) 33vw, 100vw" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                   <div className="absolute top-4 left-4">
                     <span className="px-4 py-1.5 bg-white/90 backdrop-blur-sm text-[#2C2C2A] text-[10px] uppercase font-bold tracking-widest rounded-full shadow">
