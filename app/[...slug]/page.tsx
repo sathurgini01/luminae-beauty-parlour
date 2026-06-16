@@ -1,4 +1,5 @@
 import App from "../../src/App";
+import { buildMetadata } from "../seo";
 
 const slugToView = (slug: string[] = []) => {
   const path = `/${slug.join("/")}`;
@@ -16,6 +17,14 @@ const slugToView = (slug: string[] = []) => {
   return "landing";
 };
 
+const slugToCanonicalPath = (slug: string[] = []) => {
+  const path = `/${slug.join("/")}`;
+  if (path === "/gallery") return "/trends";
+  if (path === "/story") return "/about";
+  if (path === "/book") return "/booking";
+  return path;
+};
+
 export function generateStaticParams() {
   return [
     { slug: ["services"] },
@@ -30,6 +39,15 @@ export function generateStaticParams() {
     { slug: ["admin"] },
     { slug: ["specialist"] }
   ];
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug?: string[] }>;
+}) {
+  const { slug } = await params;
+  return buildMetadata(slugToCanonicalPath(slug));
 }
 
 export default async function RoutedPage({

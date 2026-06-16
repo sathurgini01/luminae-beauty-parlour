@@ -24,7 +24,7 @@ import teamKavinduMaleBeauticianData from "../assets/images/team_kavindu_male_be
 import teamDilshanBlowdryData from "../assets/images/team_dilshan_blowdry.jpg";
 import teamAnushaFacialMaskData from "../assets/images/team_anusha_facial_mask.jpg";
 import teamSanduniNailPolishData from "../assets/images/team_sanduni_nail_polish.jpg";
-import aboutLuminaeUnisexStylistsData from "../assets/images/about_luminae_unisex_stylists.jpg";
+import aboutLuminaeUnisexStylistsData from "../assets/images/about_luminae_unisex_stylists_rose_dress.png";
 import gallerySalonInteriorData from "../assets/images/gallery_salon_interior.jpg";
 import galleryGroomPrepData from "../assets/images/gallery_groom_prep.jpg";
 import galleryMenHairWashData from "../assets/images/gallery_men_hair_wash.jpg";
@@ -393,7 +393,8 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                 sizes="100vw"
                 className="h-full w-full object-cover object-center opacity-100 animate-heroZoom"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#FFF4F5]/95 via-[#FFF4F5]/70 to-[#FFF4F5]/10" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#FFF4F5]/90 via-[#FFF4F5]/42 to-transparent" />
+              <div className="absolute inset-y-0 left-0 w-[62%] bg-gradient-to-r from-[#FFF4F5]/45 via-[#FFF4F5]/18 to-transparent" />
             </div>
 
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[760px] flex items-center">
@@ -954,7 +955,7 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
           {/* Branch Locations */}
           <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14" id="section-locations">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
-              <div className="lg:col-span-4 space-y-4">
+              <div className="lg:col-span-4 space-y-5 lg:sticky lg:top-28">
                 <span className="text-[10px] text-[#AF2B2D] tracking-[0.22em] font-sans font-extrabold uppercase block">Visit Luminae</span>
                 <h2 className="text-3xl md:text-4xl font-serif text-[#2C2C2A] font-light leading-tight">
                   Our Parlour Locations
@@ -969,10 +970,51 @@ export default function CustomerPortal({ activeSection, onNavigate }: CustomerPo
                   <Calendar className="h-3.5 w-3.5" />
                   <span>Book a Visit</span>
                 </button>
+
+                <div className="space-y-5 pt-3">
+                  {branchLocations.slice(-2).map((branch) => (
+                    <div key={branch.name} className="bg-white border border-rose-100/70 rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
+                      <div className="flex items-start gap-3">
+                        <span className="h-11 w-11 rounded-2xl bg-[#FFF4F5] border border-[#AF2B2D]/10 text-[#AF2B2D] flex items-center justify-center font-serif text-lg shrink-0">
+                          {branch.order}
+                        </span>
+                        <div>
+                          <span className="block text-[9px] font-extrabold uppercase tracking-widest text-[#AF2B2D]">{branch.label}</span>
+                          <h3 className="text-base font-serif font-medium text-[#2C2C2A] mt-1">{branch.name}</h3>
+                        </div>
+                      </div>
+
+                      <div className="mt-5 space-y-3 text-xs text-gray-600 font-sans">
+                        <div className="flex items-start gap-2.5">
+                          <MapPin className="h-4 w-4 text-[#AF2B2D] shrink-0 mt-0.5" />
+                          <span className="leading-relaxed">{branch.address}</span>
+                        </div>
+                        <div className="flex items-start gap-2.5">
+                          <Clock className="h-4 w-4 text-[#AF2B2D] shrink-0 mt-0.5" />
+                          <span className="leading-relaxed">
+                            {branch.hours}<br />
+                            {branch.weekendHours}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2.5">
+                          <Phone className="h-4 w-4 text-[#AF2B2D] shrink-0" />
+                          <a href={`tel:${branch.phone.replace(/\s/g, "")}`} className="font-bold text-[#2C2C2A] hover:text-[#AF2B2D] transition-colors">
+                            {branch.phone}
+                          </a>
+                        </div>
+                      </div>
+
+                      <div className="mt-5 pt-4 border-t border-rose-100/70 flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
+                        <p className="text-[11px] text-gray-500 leading-relaxed">{branch.note}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-5">
-                {branchLocations.map((branch) => (
+                {branchLocations.slice(0, -2).map((branch) => (
                   <div key={branch.name} className="bg-white border border-rose-100/70 rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-center gap-3">

@@ -1,0 +1,16 @@
+import type { MetadataRoute } from "next";
+import { seoConfig } from "./seo";
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: [
+      {
+        userAgent: "*",
+        allow: ["/"],
+        disallow: ["/admin", "/specialist", "/customer", "/customer/bookings", "/login", "/register", "/forgot-password"],
+      },
+    ],
+    sitemap: `${seoConfig.siteUrl}/sitemap.xml`,
+    host: seoConfig.siteUrl,
+  };
+}
